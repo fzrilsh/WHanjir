@@ -1,28 +1,29 @@
 <div align="center">
-  <h1>🌊 WHanjir</h1>
+  <img src="public/favicon.svg" width="64" height="64" alt="WHanjir logo">
+  <h1>WHanjir</h1>
   <p><strong>Visualisasi Prediksi Banjir Berbasis Peta Interaktif</strong></p>
-  <p>Jakarta Barat — Real-Time</p>
+  <p>Jakarta Barat &mdash; Real-Time</p>
   <br>
 </div>
 
 ---
 
-## 📋 Tentang Proyek
+## Tentang Proyek
 
-WHanjir adalah aplikasi pemetaan interaktif yang membantu masyarakat Jakarta mengetahui **potensi genangan banjir secara real-time**. Berbeda dengan aplikasi navigasi biasa, WHanjir fokus pada penyediaan informasi spasial yang akurat agar pengguna bisa mengambil keputusan antisipatif — seperti memutar haluan atau memilih jalur alternatif — sebelum terjebak di area terdampak banjir.
+WHanjir adalah aplikasi pemetaan interaktif yang membantu masyarakat Jakarta mengetahui potensi genangan banjir secara **real-time**. Berbeda dengan aplikasi navigasi biasa, WHanjir fokus pada penyediaan informasi spasial yang akurat agar pengguna bisa mengambil keputusan antisipatif &mdash; seperti memutar haluan atau memilih jalur alternatif &mdash; sebelum terjebak di area terdampak banjir.
 
-Aplikasi ini dikembangkan sebagai proyek mata kuliah **Human and Computer Interaction (HCI)** — Semester Genap 2025/2026.
+Aplikasi ini dikembangkan sebagai proyek mata kuliah **Human and Computer Interaction (HCI)** &mdash; Semester Genap 2025/2026.
 
-### 🎯 Target Pengguna
+### Target Pengguna
 
 - Pengemudi ojek (konvensional maupun berbasis aplikasi)
 - Kurir dan pekerja lapangan
 - Pelaku usaha kecil dengan mobilitas tinggi
-- Siapa pun yang ingin tahu: *"Apakah jalan yang akan saya lalui aman dari banjir?"*
+- Siapa pun yang ingin tahu: &ldquo;Apakah jalan yang akan saya lalui aman dari banjir?&rdquo;
 
 ---
 
-## 👥 Anggota Kelompok — Kelas LH01
+## Anggota Kelompok &mdash; Kelas LH01
 
 | NPM | Nama |
 |---|---|
@@ -34,57 +35,59 @@ Aplikasi ini dikembangkan sebagai proyek mata kuliah **Human and Computer Intera
 
 ---
 
-## ✨ Fitur-Fitur
+## Fitur-Fitur
 
-### 🗺️ Peta Interaktif Real-Time
+### Peta Interaktif Real-Time
 
 Peta menampilkan kondisi jalan di Jakarta Barat dengan tiga kategori visual:
 
-| Status | Warna | Arti |
+| Status | Warna | Skor Risiko |
 |---|---|---|
-| 🔴 **Banjir Parah** | Merah | Skor risiko ≥ 70 — jalan sangat terdampak |
-| 🟡 **Ter genang** | Kuning | Skor risiko 40–69 — waspada genangan |
-| 🟢 **Aman** | Hijau | Skor risiko < 40 — jalan relatif aman |
+| <span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:#BA1A1A;vertical-align:middle;margin-right:4px;"></span> **Banjir Parah** | <span style="color:#BA1A1A;">Merah</span> | &ge; 70 |
+| <span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:#FFBA52;vertical-align:middle;margin-right:4px;"></span> **Ter genang** | <span style="color:#E88502;">Kuning</span> | 40 &ndash; 69 |
+| <span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:#34C759;vertical-align:middle;margin-right:4px;"></span> **Aman** | <span style="color:#34C759;">Hijau</span> | &lt; 40 |
 
-### 📍 Pencarian Jalan & Kelurahan
+### Pencarian Jalan &amp; Kelurahan
 
-Cari nama jalan atau kelurahan — langsung ditampilkan status risikonya lengkap dengan skor.
+Cari nama jalan atau kelurahan &mdash; langsung ditampilkan status risikonya lengkap dengan skor.
 
-### 🏘️ Tampilan Area (Thematic View)
+### Tampilan Area (Thematic View)
 
-Lihat risiko banjir per kelurahan dalam tampilan area berwarna — memudahkan melihat wilayah mana yang perlu diwaspadai secara keseluruhan.
+Lihat risiko banjir per kelurahan dalam tampilan area berwarna &mdash; memudahkan melihat wilayah mana yang perlu diwaspadai secara keseluruhan.
 
-### 🧭 Rute Alternatif
+### Rute Alternatif
 
 Tentukan titik tujuan, sistem akan menampilkan rute tercepat yang bisa diikuti. Garis rute dirancang dengan outline putih agar tetap terlihat jelas meski melewati jalan dengan status risiko tinggi.
 
-### 📍 Lokasi Pengguna (GPS)
+### Lokasi Pengguna (GPS)
 
 Fitur geolokasi menunjukkan posisi kamu di peta secara langsung, sehingga kamu bisa melihat apakah posisi saat ini berada di area aman atau terdampak.
 
-### 🌗 Mode Terang / Gelap
+### Mode Terang / Gelap
 
 Sesuaikan tampilan peta dengan preferensi:
-- **Terang** — untuk penggunaan siang hari
-- **Gelap** — nyaman dipakai di malam hari
-- **Ikut Sistem** — otomatis mengikuti tema perangkat kamu
+
+- **Terang** &mdash; untuk penggunaan siang hari
+- **Gelap** &mdash; nyaman dipakai di malam hari
+- **Ikut Sistem** &mdash; otomatis mengikuti tema perangkat kamu
 
 Pengaturan tersimpan otomatis, tidak perlu mengatur ulang setiap kali membuka aplikasi.
 
-### 📱 Aplikasi Web Progresif (PWA)
+### Aplikasi Web Progresif (PWA)
 
 WHanjir bisa diinstal langsung ke layar beranda HP seperti aplikasi native. Setelah diinstal:
+
 - Buka seperti aplikasi biasa (tanpa browser)
 - Loading lebih cepat berkat cache cerdas
 - Notifikasi update otomatis
 
-### 🔄 Data Real-Time
+### Data Real-Time
 
-Data risiko banjir diperbarui secara otomatis setiap beberapa menit — tanpa perlu me-refresh halaman manual. Jika koneksi terputus, aplikasi akan menampilkan pemberitahuan yang jelas.
+Data risiko banjir diperbarui secara otomatis setiap beberapa menit &mdash; tanpa perlu me-refresh halaman manual. Jika koneksi terputus, aplikasi akan menampilkan pemberitahuan yang jelas.
 
 ---
 
-## 🛠️ Cara Menjalankan
+## Cara Menjalankan
 
 ### Syarat Sistem
 
@@ -120,21 +123,21 @@ npm run preview
 
 ---
 
-## 🧪 Teknologi yang Digunakan
+## Teknologi yang Digunakan
 
 | Teknologi | Kegunaan |
 |---|---|
-| **React** | Kerangka kerja antarmuka |
-| **Vite** | Build tool — cepat dan ringan |
-| **Tailwind CSS** | Styling antarmuka |
-| **MapLibre GL JS** | Peta interaktif (open-source) |
-| **Socket.IO** | Komunikasi data real-time |
-| **Flask** | Backend API server |
-| **PWA (Vite Plugin)** | Kemampuan instalasi offline |
+| React | Kerangka kerja antarmuka |
+| Vite | Build tool &mdash; cepat dan ringan |
+| Tailwind CSS | Styling antarmuka |
+| MapLibre GL JS | Peta interaktif (open-source) |
+| Socket.IO | Komunikasi data real-time |
+| Flask | Backend API server |
+| PWA (Vite Plugin) | Kemampuan instalasi offline |
 
 ---
 
 <div align="center">
-  <p><sub>Dikembangkan untuk tugas mata kuliah HCI — Semester Genap 2025/2026</sub></p>
+  <p><sub>Dikembangkan untuk tugas mata kuliah HCI &mdash; Semester Genap 2025/2026</sub></p>
   <p><sub>Universitas Bina Nusantara</sub></p>
 </div>
