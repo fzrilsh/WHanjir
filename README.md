@@ -2,7 +2,7 @@
   <img src="public/pwa-512x512.png" width="64" height="64" alt="WHanjir logo">
   <h1>WHanjir</h1>
   <p><strong>Visualisasi Prediksi Banjir Berbasis Peta Interaktif</strong></p>
-  <p>Jakarta Barat &mdash; Real-Time</p>
+  <p>Jakarta Barat - Real-Time</p>
   <br>
 </div>
 
@@ -10,20 +10,20 @@
 
 ## Tentang Proyek
 
-WHanjir adalah aplikasi pemetaan interaktif yang membantu masyarakat Jakarta mengetahui potensi genangan banjir secara **real-time**. Berbeda dengan aplikasi navigasi biasa, WHanjir fokus pada penyediaan informasi spasial yang akurat agar pengguna bisa mengambil keputusan antisipatif &mdash; seperti memutar haluan atau memilih jalur alternatif &mdash; sebelum terjebak di area terdampak banjir.
+WHanjir adalah aplikasi pemetaan interaktif yang membantu masyarakat Jakarta mengetahui potensi genangan banjir secara **real-time**. Berbeda dengan aplikasi navigasi biasa, WHanjir fokus pada penyediaan informasi spasial yang akurat agar pengguna bisa mengambil keputusan antisipatif, seperti memutar haluan atau memilih jalur alternatif sebelum terjebak di area terdampak banjir.
 
-Aplikasi ini dikembangkan sebagai proyek mata kuliah **Human and Computer Interaction (HCI)** &mdash; Semester Genap 2025/2026.
+Aplikasi ini dikembangkan sebagai proyek mata kuliah **Human and Computer Interaction (HCI)** Semester Genap 2025/2026.
 
 ### Target Pengguna
 
 - Pengemudi ojek (konvensional maupun berbasis aplikasi)
 - Kurir dan pekerja lapangan
 - Pelaku usaha kecil dengan mobilitas tinggi
-- Siapa pun yang ingin tahu: &ldquo;Apakah jalan yang akan saya lalui aman dari banjir?&rdquo;
+- Siapa pun yang ingin tahu: "Apakah jalan yang akan saya lalui aman dari banjir?"
 
 ---
 
-## Anggota Kelompok &mdash; Kelas LH01
+## Anggota Kelompok - Kelas LH01
 
 | NPM | Nama |
 |---|---|
@@ -43,17 +43,17 @@ Peta menampilkan kondisi jalan di Jakarta Barat dengan tiga kategori visual:
 
 | Status | Warna | Skor Risiko |
 |---|---|---|
-| <span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:#BA1A1A;vertical-align:middle;margin-right:4px;"></span> **Banjir Parah** | <span style="color:#BA1A1A;">Merah</span> | &ge; 70 |
-| <span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:#FFBA52;vertical-align:middle;margin-right:4px;"></span> **Ter genang** | <span style="color:#E88502;">Kuning</span> | 40 &ndash; 69 |
-| <span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:#34C759;vertical-align:middle;margin-right:4px;"></span> **Aman** | <span style="color:#34C759;">Hijau</span> | &lt; 40 |
+| <span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:#BA1A1A;vertical-align:middle;margin-right:4px;"></span> **Banjir Parah** | <span style="color:#BA1A1A;">Merah</span> | >= 70 |
+| <span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:#FFBA52;vertical-align:middle;margin-right:4px;"></span> **Tergenang** | <span style="color:#E88502;">Kuning</span> | 40 - 69 |
+| <span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:#34C759;vertical-align:middle;margin-right:4px;"></span> **Aman** | <span style="color:#34C759;">Hijau</span> | < 40 |
 
-### Pencarian Jalan &amp; Kelurahan
+### Pencarian Jalan dan Kelurahan
 
-Cari nama jalan atau kelurahan &mdash; langsung ditampilkan status risikonya lengkap dengan skor.
+Cari nama jalan atau kelurahan, langsung ditampilkan status risikonya lengkap dengan skor.
 
 ### Tampilan Area (Thematic View)
 
-Lihat risiko banjir per kelurahan dalam tampilan area berwarna &mdash; memudahkan melihat wilayah mana yang perlu diwaspadai secara keseluruhan.
+Lihat risiko banjir per kelurahan dalam tampilan area berwarna untuk memudahkan melihat wilayah mana yang perlu diwaspadai secara keseluruhan.
 
 ### Rute Alternatif
 
@@ -67,9 +67,9 @@ Fitur geolokasi menunjukkan posisi kamu di peta secara langsung, sehingga kamu b
 
 Sesuaikan tampilan peta dengan preferensi:
 
-- **Terang** &mdash; untuk penggunaan siang hari
-- **Gelap** &mdash; nyaman dipakai di malam hari
-- **Ikut Sistem** &mdash; otomatis mengikuti tema perangkat kamu
+- **Terang** - untuk penggunaan siang hari
+- **Gelap** - nyaman dipakai di malam hari
+- **Ikut Sistem** - otomatis mengikuti tema perangkat kamu
 
 Pengaturan tersimpan otomatis, tidak perlu mengatur ulang setiap kali membuka aplikasi.
 
@@ -83,7 +83,7 @@ WHanjir bisa diinstal langsung ke layar beranda HP seperti aplikasi native. Sete
 
 ### Data Real-Time
 
-Data risiko banjir diperbarui secara otomatis setiap beberapa menit &mdash; tanpa perlu me-refresh halaman manual. Jika koneksi terputus, aplikasi akan menampilkan pemberitahuan yang jelas.
+Data risiko banjir diperbarui secara otomatis setiap beberapa menit tanpa perlu me-refresh halaman manual. Jika koneksi terputus, aplikasi akan menampilkan pemberitahuan yang jelas.
 
 ---
 
@@ -128,7 +128,7 @@ npm run preview
 | Teknologi | Kegunaan |
 |---|---|
 | React | Kerangka kerja antarmuka |
-| Vite | Build tool &mdash; cepat dan ringan |
+| Vite | Build tool cepat dan ringan |
 | Tailwind CSS | Styling antarmuka |
 | MapLibre GL JS | Peta interaktif (open-source) |
 | Socket.IO | Komunikasi data real-time |
@@ -138,6 +138,6 @@ npm run preview
 ---
 
 <div align="center">
-  <p><sub>Dikembangkan untuk tugas mata kuliah HCI &mdash; Semester Genap 2025/2026</sub></p>
+  <p><sub>Dikembangkan untuk tugas mata kuliah HCI Semester Genap 2025/2026</sub></p>
   <p><sub>Universitas Bina Nusantara</sub></p>
 </div>
