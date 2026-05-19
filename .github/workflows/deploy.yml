@@ -5,6 +5,9 @@ on:
     branches:
       - main
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -27,9 +30,25 @@ jobs:
           VITE_WS_PROTOCOL: https
 
       - name: Deploy to dist branch
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist
-          publish_branch: dist
-          force_orphan: true
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+
+          # Switch to an orphan branch (no history)
+          git checkout --orphan dist
+
+          # Remove all tracked files from the orphan branch
+          git rm -rf . || true
+
+          # Copy built dist to repo root
+          rsync -a dist/ ./
+
+          # Add .nojekyll for GitHub Pages (if needed)
+          touch .nojekyll
+
+          # Stage and commit
+          git add -A
+          git commit -m "deploy: $(date +'%Y-%m-%d %H:%M:%S')"
+
+          # Force push to dist branch
+          git push origin dist --force
