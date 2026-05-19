@@ -155,7 +155,6 @@ function SearchPage({ onBack, onSelectRoute }) {
           <div className="px-4 z-20 my-3 shrink-0">
             <div className="bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden">
               <div className="px-4 py-2.5 border-b border-gray-100 flex items-center gap-2">
-                <LocationPinIcon className="w-6 h-6" />
                 <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
                   Suggestions
                 </span>
