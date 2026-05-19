@@ -4,6 +4,7 @@ import tailwindcss from '@tailwindcss/vite'
 import { VitePWA } from 'vite-plugin-pwa'
 
 export default defineConfig({
+  base: '/WHanjir/',
   server: {
     allowedHosts: ['3990-180-242-131-95.ngrok-free.app']
   },
