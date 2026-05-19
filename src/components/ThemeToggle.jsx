@@ -1,9 +1,11 @@
 import { useState, useRef, useEffect } from 'react'
 
+const base = import.meta.env.BASE_URL || '/'
+
 const OPTIONS = [
-  { value: 'light', label: 'Terang', icon: '/icons/sun.svg' },
-  { value: 'dark', label: 'Gelap', icon: '/icons/moon.svg' },
-  { value: 'system', label: 'Ikut Sistem', icon: '/icons/monitor.svg' },
+  { value: 'light', label: 'Terang', icon: `${base}icons/sun.svg` },
+  { value: 'dark', label: 'Gelap', icon: `${base}icons/moon.svg` },
+  { value: 'system', label: 'Ikut Sistem', icon: `${base}icons/monitor.svg` },
 ]
 
 function ThemeToggle({ theme, onChange }) {
