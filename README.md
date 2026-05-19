@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="public/favicon.svg" width="64" height="64" alt="WHanjir logo">
+  <img src="public/pwa-512x512.png" width="64" height="64" alt="WHanjir logo">
   <h1>WHanjir</h1>
   <p><strong>Visualisasi Prediksi Banjir Berbasis Peta Interaktif</strong></p>
   <p>Jakarta Barat &mdash; Real-Time</p>
