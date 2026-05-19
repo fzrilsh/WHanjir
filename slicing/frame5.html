@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Frame 5 - Road Detail Bottom Sheet</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
+  <style>
+    * {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+  </style>
+</head>
+
+<body class="bg-gray-900 min-h-screen flex items-center justify-center p-8">
+  <div class="w-[400px] h-[874px] bg-white rounded-[30px] overflow-hidden relative shadow-2xl">
+
+    <!-- Map Placeholder -->
+    <div class="absolute inset-0 bg-[#E8EDF2]"></div>
+
+    <!-- Search Bar -->
+    <div class="absolute top-[18px] left-[24px] w-[360px] h-[56px] z-10">
+      <div class="w-full h-full bg-white rounded-[16px] shadow-lg flex items-center px-4">
+        <span class="text-[14px] text-[#49454F] font-normal flex-1">Pencarian jalan</span>
+        <!-- Icon 1 -->
+      </div>
+    </div>
+
+    <!-- LEVEL 1: Floating Surface (Bottom Sheet) -->
+    <div class="absolute bottom-0 left-0 right-0 bg-white rounded-t-[24px] shadow-[0_-8px_40px_rgba(0,0,0,0.15)]"
+      style="height: 532px;">
+
+      <!-- Drag Handle -->
+      <div class="flex justify-center pt-4 pb-3">
+        <div class="w-12 h-1.5 bg-[#C1C6D6] rounded-full"></div>
+      </div>
+
+      <!-- Container -->
+      <div class="px-4">
+
+        <!-- Header Section -->
+        <div class="flex items-start justify-between">
+          <div>
+            <!-- Street name + location pin icon -->
+            <div class="flex items-center gap-2">
+              <!-- Icon 2 -->
+              <h2 class="text-xl font-semibold text-[#1A1B1E] leading-7 tracking-[0]">Jl. Daan Mogot</h2>
+            </div>
+            <!-- Kelurahan -->
+            <div class="flex items-center gap-2 ml-[27px] mt-1">
+              <!-- Location Pin Icon (from Figma) -->
+              <!-- Icon 3 -->
+              <span class="text-xs font-medium text-[#414754] leading-4">Kelurahan: Wijaya Kusuma</span>
+            </div>
+          </div>
+          <!-- Close Button -->
+          <button
+            class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors flex-shrink-0 mt-0.5">
+            <!-- Icon 4 -->
+          </button>
+        </div>
+
+        <!-- Structured Grid: Metrics -->
+        <div class="mt-6 flex flex-col gap-3">
+
+          <!-- Primary Status Card - red border, light red bg -->
+          <div class="rounded-3xl p-4 relative overflow-hidden"
+            style="background-color: rgba(255,218,214,0.3); border: 1px solid rgba(186,26,26,0.2);">
+            <!-- Decorative circle top-right -->
+            <div class="absolute -right-8 -top-16 w-32 h-32 rounded-full opacity-10" style="background-color: #BA1A1A;">
+            </div>
+
+            <div class="relative z-[1]">
+              <!-- STATUS AREA label + BANJIR PARAH badge -->
+              <div class="flex items-center justify-between mb-3">
+                <span class="text-xs font-medium text-[#414754] tracking-[0.6px]">STATUS AREA</span>
+                <div class="flex items-center gap-1.5 rounded-full px-3 py-1" style="background-color: #BA1A1A;">
+                  <!-- Warning triangle icon -->
+                  <!-- Icon 5 -->
+                  <span class="text-[11px] font-bold text-white tracking-[0.275px] leading-4">BANJIR PARAH</span>
+                </div>
+              </div>
+
+              <!-- 60 cm -->
+              <div class="flex items-baseline gap-[2.4px]">
+                <span class="text-[32px] font-bold leading-10 tracking-[-0.64px]" style="color: #BA1A1A;">60</span>
+                <span class="text-2xl font-semibold leading-8 tracking-[-0.64px]" style="color: #BA1A1A;">cm</span>
+              </div>
+
+              <!-- Tinggi Air Saat Ini -->
+              <p class="text-[11px] font-medium text-[#414754] tracking-[0.5px] leading-4 mt-1">Tinggi Air Saat Ini</p>
+            </div>
+          </div>
+
+          <!-- Sensor Info Card -->
+          <div class="rounded-[48px] p-4 flex items-center gap-4 bg-white border border-[#E3E2E6]">
+            <!-- Sensor Icon -->
+            <div class="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0"
+              style="background-color: rgba(186,26,26,0.1);">
+              <!-- Icon 6 -->
+            </div>
+            <div class="flex-1 min-w-0">
+              <p class="text-xs font-medium text-[#414754] leading-4">Sumber Data</p>
+              <p class="text-sm font-medium text-[#1A1B1E] leading-5 mt-0.5">Sensor Banjir JB-012</p>
+            </div>
+          </div>
+
+          <!-- Risk Score Card -->
+          <div class="rounded-[48px] p-4 bg-white border border-[#E3E2E6]">
+            <!-- Tingkat Risiko label + score -->
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-xs font-medium text-[#414754] leading-4">Tingkat Risiko</span>
+              <div class="flex items-baseline gap-0.5">
+                <span class="text-sm font-bold leading-5 tracking-[0.1px]" style="color: #BA1A1A;">91</span>
+                <span class="text-[11px] font-normal text-[#414754] tracking-[0.5px] leading-4">/100</span>
+              </div>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="h-[10px] bg-[#E3E2E6] rounded-full overflow-hidden">
+              <div class="h-full rounded-full relative overflow-hidden" style="width: 91%; background-color: #BA1A1A;">
+                <!-- Striped pattern -->
+                <div class="absolute inset-0"
+                  style="background: repeating-linear-gradient(-45deg, rgba(255,255,255,0.2) 0px, rgba(255,255,255,0.2) 2px, transparent 2px, transparent 5px);">
+                </div>
+              </div>
+            </div>
+
+            <!-- Aman - Kritis labels -->
+            <div class="flex items-center justify-between mt-1.5">
+              <span class="text-[11px] font-medium text-[#414754] opacity-70 tracking-[0.5px] leading-4">Aman</span>
+              <span class="text-[11px] font-medium text-[#414754] opacity-70 tracking-[0.5px] leading-4">Kritis</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+</body>
+
+</html>

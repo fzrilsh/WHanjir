@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Frame 6 - Area Detail (AMAN)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
+  <style>
+    * {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+  </style>
+</head>
+
+<body class="bg-gray-900 min-h-screen flex items-center justify-center p-8">
+  <div class="w-[402px] h-[874px] bg-white rounded-[30px] overflow-hidden relative shadow-2xl">
+
+    <!-- Map Placeholder -->
+    <div class="absolute inset-0 bg-[#E8EDF2]"></div>
+
+    <!-- Search Bar -->
+    <div class="absolute top-[18px] left-[24px] w-[360px] h-[56px] z-10">
+      <div class="w-full h-full bg-white rounded-[16px] shadow-lg flex items-center px-4">
+        <span class="text-[14px] text-[#49454F] font-normal flex-1">Pencarian jalan</span>
+        <!-- Icon 1 -->
+      </div>
+    </div>
+
+    <!-- Bottom Sheet (Floating Container) -->
+    <div class="absolute left-[-3px] right-[-3px] bg-white rounded-t-[24px] shadow-[0_-8px_40px_rgba(0,0,0,0.15)]"
+      style="top: 334px; height: 585px;">
+
+      <!-- Drag Handle -->
+      <div class="flex justify-center pt-3 pb-1">
+        <div class="w-12 h-1.5 bg-[#C1C6D6] rounded-full"></div>
+      </div>
+
+      <!-- Content Container -->
+      <div class="px-5 pt-0 pb-6">
+
+        <!-- Header Section -->
+        <div class="flex items-start justify-between">
+          <div>
+            <div class="flex items-center gap-2">
+              <!-- Location Pin Icon (exported from Figma: 73:50223, 21x22.17) -->
+              <!-- Icon 2 -->
+              <h2 class="text-[26px] font-semibold text-[#1A1B1E] leading-8 tracking-[-0.65px]">Kelurahan<br>Cengkareng
+                Barat</h2>
+            </div>
+            <div class="flex items-center gap-2 mt-1.5 ml-7">
+              <!-- Building Icon (exported from Figma: 73:50229, 10.67x13.33) -->
+               <!-- Icon 3 -->
+              <span class="text-sm text-[#414754]">Kecamatan: Cengkareng</span>
+            </div>
+          </div>
+
+          <!-- Close Button (exported from Figma: 73:50234, 11.67x11.67) -->
+          <button
+            class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors flex-shrink-0 mt-0.5">
+            <!-- Icon 4 -->
+          </button>
+        </div>
+
+        <!-- Status Badge -->
+        <div class="mt-6 flex items-center gap-3">
+          <div class="flex items-center rounded-full px-4 py-1.5" style="background-color: #34C759;">
+            <span class="text-[13px] font-bold text-white tracking-[0.65px] leading-5">AMAN</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <div class="w-2 h-2 rounded-full" style="background-color: #34C759;"></div>
+            <span class="text-[13px] font-medium leading-5" style="color: #34C759;">Not Flooded</span>
+          </div>
+        </div>
+
+        <!-- Bento Grid Stats -->
+        <div class="mt-6 flex gap-4">
+          <!-- Active Sensors Stat - WHITE bg -->
+          <div class="flex-1 bg-white rounded-2xl p-4 border border-[#E3E2E6]">
+            <div class="flex items-center gap-2 mb-2">
+              <!-- Sensor Icon (exported from Figma: 73:50251, 16.67x11.79) -->
+              <!-- Icon 5 -->
+              <span class="text-[11px] font-semibold text-[#414754] tracking-[0.55px] leading-[16.5px]">ACTIVE
+                SENSORS</span>
+            </div>
+            <div class="flex items-baseline gap-1">
+              <span class="text-[36px] font-bold text-[#1A1B1E] leading-9">5</span>
+              <span class="text-sm text-[#414754] mt-1">Sensor</span>
+            </div>
+          </div>
+
+          <!-- Max Height Stat - WHITE bg -->
+          <div class="flex-1 bg-white rounded-2xl p-4 border border-[#E3E2E6]">
+            <div class="flex items-center gap-2 mb-2">
+              <!-- Height/Arrow Icon (exported from Figma: 73:50261, 13.33x16.67) -->
+              <!-- Icon 6 -->
+              <span class="text-[11px] font-semibold text-[#414754] tracking-[0.55px] leading-[16.5px]">HEIGHT</span>
+            </div>
+            <div class="flex items-baseline gap-1">
+              <span class="text-[36px] font-bold text-[#1A1B1E] leading-9">4</span>
+              <span class="text-sm text-[#414754] mt-1">cm</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Risk Score Card - WHITE bg, /100 format -->
+        <div class="mt-3 bg-white rounded-2xl p-4 border border-[#C1C6D6]">
+          <div class="flex items-start justify-between mb-1">
+            <div>
+              <span class="text-[11px] font-semibold text-[#414754] tracking-[0.55px] leading-[16.5px]">RISK
+                SCORE</span>
+              <p class="text-xl font-semibold text-[#1A1B1E] leading-7 mt-1.5">Critical Level</p>
+            </div>
+            <div class="flex items-baseline gap-0.5">
+              <span class="text-[28px] font-bold leading-[42px]" style="color: #34C759;">11</span>
+              <span class="text-sm text-[#414754]">/100</span>
+            </div>
+          </div>
+          <!-- Progress Bar -->
+          <div class="h-[10px] bg-[#E3E2E6] rounded-full overflow-hidden mt-3">
+            <div class="h-full rounded-full" style="width: 11%; background-color: #34C759;"></div>
+          </div>
+        </div>
+
+        <!-- Info Card - GRAY bg (only this one) -->
+        <div class="mt-4 flex items-start gap-3 bg-[#FAF9FD] rounded-2xl p-4 border border-[#E3E2E6]">
+          <!-- Info Icon (exported from Figma: 73:50287, 15x15) -->
+          <div class="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0"
+            style="background-color: rgba(52,199,89,0.1);">
+            <!-- Icon 7 -->
+          </div>
+          <div class="flex-1">
+            <p class="text-[15px] font-semibold text-[#1A1B1E] leading-[22.5px]">7 affected roads</p>
+            <p class="text-sm text-[#414754] leading-[21px] mt-0.5">Traffic severely disrupted</p>
+          </div>
+          <!-- Chevron Right Icon (exported from Figma: 73:50295, 6.17x10) -->
+          <!-- Icon 8 -->
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</body>
+
+</html>

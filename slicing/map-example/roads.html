@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MapLibre 3D Roads - Tugas Kuliah</title>
+
+    <!-- Load MapLibre CSS & JS -->
+    <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.1.2/dist/maplibre-gl.css" />
+    <script src="https://unpkg.com/maplibre-gl@4.1.2/dist/maplibre-gl.js"></script>
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        #map {
+            height: 100vh;
+            width: 100vw;
+        }
+
+        /* Opsional: Styling sedikit untuk popup agar lebih rapi */
+        .maplibregl-popup-content {
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        details {
+            display: none !important;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="map"></div>
+
+    <script>
+        // 1. Inisialisasi Peta MapLibre
+        const map = new maplibregl.Map({
+            container: 'map',
+            // Menggunakan basemap Vector gratis dari Carto (Positron)
+            style: 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json',
+            center: [106.8000, -6.2000], // Koordinat awal (Jakarta)
+            zoom: 20,
+            pitch: 85,   // TILT: Membuat peta miring jadi 3D (0-85 derajat)
+            bearing: -15 // ROTATE: Memutar orientasi peta
+        });
+
+        const geolocate = new maplibregl.GeolocateControl({
+            positionOptions: {
+                enableHighAccuracy: true // Memaksa browser pakai GPS biar akurat
+            },
+            trackUserLocation: true,     // KUNCI REAL-TIME: Peta bakal otomatis ngikutin posisi user pas bergerak
+            showUserLocation: true,      // Nampilin titik biru di posisi user
+            showUserHeading: true,        // Nampilin arah hadap handphone (kalau buka di HP)
+            fitBoundsOptions: {
+                maxZoom: 20, // Peta gak bakal nge-zoom lebih dekat dari level 16
+                linear: false
+            },
+        });
+
+        
+        // Tambahkan kontrol zoom dan kompas di kanan atas
+        map.addControl(new maplibregl.NavigationControl(), 'bottom-right');
+        
+        map.addControl(geolocate, 'bottom-right');
+
+        // Tunggu sampai style peta selesai diload
+        map.on('load', async () => {
+
+            // --- FITUR HAPUS NAMA TEMPAT (POI) ---
+            // Kita loop semua layer dari basemap, jika ada yang mengandung kata 'poi', kita matikan.
+            const layers = map.getStyle().layers;
+            layers.forEach(layer => {
+                if (layer.id.includes('poi')) {
+                    map.setLayoutProperty(layer.id, 'visibility', 'none');
+                }
+            });
+
+            // --- FETCH & TRANSFORMASI DATA ---
+            try {
+                // Ambil data JSON kamu (pastikan pakai local server seperti 'php -S localhost:8000')
+                const response = await fetch('final_scoring.json');
+                const rawData = await response.json();
+
+                // Konversi format data kamu ke GeoJSON standar
+                const geojsonData = {
+                    "type": "FeatureCollection",
+                    "features": rawData.map(item => ({
+                        "type": "Feature",
+                        "geometry": item.geometry,
+                        "properties": {
+                            "name": item.name,
+                            "kelurahan": item.kelurahan,
+                            "score": item.score,
+                            "color": item.color // warna dari data kamu
+                        }
+                    }))
+                };
+
+                // --- TAMBAHKAN DATA KE PETA ---
+                // Di MapLibre, kita harus tambah Source dulu, baru Layer
+                map.addSource('data-jalan', {
+                    type: 'geojson',
+                    data: geojsonData
+                });
+
+                map.addLayer({
+                    id: 'layer-garis-jalan',
+                    type: 'line',
+                    source: 'data-jalan',
+                    layout: {
+                        'line-join': 'round',
+                        'line-cap': 'round'
+                    },
+                    paint: {
+                        // Mengambil instruksi warna langsung dari properti data kamu
+                        'line-color': ['get', 'color'],
+                        'line-width': 10,
+                        'line-opacity': 0.2
+                    }
+                });
+
+                // --- INTERAKSI POPUP ---
+                // Saat garis jalan diklik
+                map.on('click', 'layer-garis-jalan', (e) => {
+                    const props = e.features[0].properties;
+                    // Ambil koordinat tempat user mengklik
+                    const coordinates = e.lngLat;
+
+                    const popupHtml = `
+                        <div style="font-family: sans-serif;">
+                            <h3 style="margin: 0 0 8px 0;">${props.name}</h3>
+                            <b>Kelurahan:</b> ${props.kelurahan}<br>
+                            <b>Score:</b> <span style="color: ${props.color}; font-weight: bold;">${props.score}</span>
+                        </div>
+                    `;
+
+                    new maplibregl.Popup()
+                        .setLngLat(coordinates)
+                        .setHTML(popupHtml)
+                        .addTo(map);
+                });
+
+                // Ubah kursor jadi 'pointer' saat hover di atas garis jalan
+                map.on('mouseenter', 'layer-garis-jalan', () => {
+                    map.getCanvas().style.cursor = 'pointer';
+                });
+                map.on('mouseleave', 'layer-garis-jalan', () => {
+                    map.getCanvas().style.cursor = '';
+                });
+
+            } catch (error) {
+                console.error("Gagal memuat data:", error);
+                alert("Gagal memuat roads.json, pastikan kamu menjalankan local server.");
+            }
+        });
+    </script>
+</body>
+
+</html>

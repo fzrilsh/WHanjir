@@ -1,0 +1,17 @@
+function BackArrowIcon({ className = 'w-[41px] h-[40px]' }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 41 40"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M11.825 17L17.425 22.6L16 24L8 16L16 8L17.425 9.4L11.825 15H24V17H11.825Z"
+        fill="#1A1B1E"
+      />
+    </svg>
+  )
+}
+
+export default BackArrowIcon

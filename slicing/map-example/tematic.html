@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MapLibre 3D Roads - Tugas Kuliah</title>
+
+    <!-- Load MapLibre CSS & JS -->
+    <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.1.2/dist/maplibre-gl.css" />
+    <script src="https://unpkg.com/maplibre-gl@4.1.2/dist/maplibre-gl.js"></script>
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        #map {
+            height: 100vh;
+            width: 100vw;
+        }
+
+        /* Opsional: Styling sedikit untuk popup agar lebih rapi */
+        .maplibregl-popup-content {
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        details {
+            display: none !important;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="map"></div>
+
+    <script>
+        // 1. Inisialisasi Peta MapLibre
+        const map = new maplibregl.Map({
+            container: 'map',
+            // Menggunakan basemap Vector gratis dari Carto (Positron)
+            style: 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json',
+            center: [106.8000, -6.2000], // Koordinat awal (Jakarta)
+            zoom: 20,
+            pitch: 85,   // TILT: Membuat peta miring jadi 3D (0-85 derajat)
+            bearing: -15 // ROTATE: Memutar orientasi peta
+        });
+
+        const geolocate = new maplibregl.GeolocateControl({
+            positionOptions: {
+                enableHighAccuracy: true // Memaksa browser pakai GPS biar akurat
+            },
+            trackUserLocation: true,     // KUNCI REAL-TIME: Peta bakal otomatis ngikutin posisi user pas bergerak
+            showUserLocation: false,      // Nampilin titik biru di posisi user
+            showUserHeading: true,        // Nampilin arah hadap handphone (kalau buka di HP)
+            fitBoundsOptions: {
+                maxZoom: 20, // Peta gak bakal nge-zoom lebih dekat dari level 16
+                linear: false
+            },
+        });
+
+
+        // Tambahkan kontrol zoom dan kompas di kanan atas
+        map.addControl(new maplibregl.NavigationControl(), 'bottom-right');
+
+        map.addControl(geolocate, 'bottom-right');
+
+        // Tunggu sampai style peta selesai diload
+        map.on('load', async () => {
+
+            // --- FITUR HAPUS NAMA TEMPAT (POI) ---
+            // Kita loop semua layer dari basemap, jika ada yang mengandung kata 'poi', kita matikan.
+            const layers = map.getStyle().layers;
+            layers.forEach(layer => {
+                if (layer.id.includes('poi')) {
+                    map.setLayoutProperty(layer.id, 'visibility', 'none');
+                }
+            });
+
+            // --- FETCH & TRANSFORMASI DATA ---
+            try {
+                // Ambil data JSON kamu (pastikan pakai local server seperti 'php -S localhost:8000')
+                const response = await fetch('boundaries.json');
+                const geojsonData = await response.json();
+
+                // --- TAMBAHKAN DATA KE PETA ---
+                // Di MapLibre, kita harus tambah Source dulu, baru Layer
+                map.addSource('kelurahan-jakarta', {
+                    type: 'geojson',
+                    data: geojsonData
+                });
+
+                map.addLayer({
+                    id: 'layer-tematik-fill',
+                    type: 'fill',
+                    source: 'kelurahan-jakarta',
+                    paint: {
+                        /* 
+                           KUNCI PETA TEMATIK: Menggunakan ekspresi 'step' MapLibre.
+                           Karena di OSM properti 'population' berbentuk String ("27926"), 
+                           kita bungkus dengan ['to-number', ...] agar dibaca sebagai angka oleh MapLibre.
+                        */
+                        'fill-color': [
+                            'step',
+                            ['to-number', ['get', 'population']],
+                            '#fecc5c', // 2. Warna jika populasi 10.000 - 24.999 (Kuning)
+                            10000,     // Rentang pertama
+                            '#f03b20',  // 3. Warna jika populasi >= 25.000 (Merah)
+                            25000,     // Rentang kedua
+                            '#a1dab4', // 1. Warna default jika populasi di bawah 10.000 (Hijau)
+                        ],
+                        'fill-opacity': 0.2 // Dibuat agak transparan agar basemap di bawahnya tetap kelihatan
+                    }
+                });
+
+                map.addLayer({
+                    id: 'layer-border-kelurahan',
+                    type: 'line',
+                    source: 'kelurahan-jakarta',
+                    paint: {
+                        'line-color': '#ffffff', // Garis batas warna putih
+                        'line-width': 1.5
+                    }
+                });
+
+                // --- OPSI INTERAKSI: HOVER EFFECT ---
+                // Mengubah opasitas saat mouse berada di atas kelurahan tertentu
+                map.on('mousemove', 'layer-tematik-fill', (e) => {
+                    map.getCanvas().style.cursor = 'pointer';
+                });
+
+                map.on('mouseleave', 'layer-tematik-fill', () => {
+                    map.getCanvas().style.cursor = '';
+                });
+
+            } catch (error) {
+                console.error("Gagal memuat data:", error);
+                alert("Gagal memuat roads.json, pastikan kamu menjalankan local server.");
+            }
+        });
+    </script>
+</body>
+
+</html>

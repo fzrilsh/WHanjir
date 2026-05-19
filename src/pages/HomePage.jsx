@@ -1,0 +1,173 @@
+import { useState, useCallback, useEffect, useRef } from 'react'
+import MapView from '../components/MapView'
+import SearchBar from '../components/SearchBar'
+import ViewToggle from '../components/ViewToggle'
+import ThemeToggle from '../components/ThemeToggle'
+import RoadDetailSheet from '../components/RoadDetailSheet'
+import AreaDetailSheet from '../components/AreaDetailSheet'
+import { useRoadData, useTematicData, useDataUpdated } from '../hooks/SocketProvider'
+import { ENDPOINTS } from '../config/api'
+import { getCurrentPosition } from '../utils/geolocation'
+
+function HomePage({ onMapReady, onOpenSearch, routeDestination, isDarkMode, theme, onThemeChange }) {
+  const [activeView, setActiveView] = useState('road')
+  const [selectedRoad, setSelectedRoad] = useState(null)
+  const [selectedArea, setSelectedArea] = useState(null)
+  const [sheetKey, setSheetKey] = useState(0)
+  const [areaSheetKey, setAreaSheetKey] = useState(0)
+  const [routeData, setRouteData] = useState(null)
+  const [routeInfo, setRouteInfo] = useState(null)
+  const [isRouting, setIsRouting] = useState(false)
+  const prevRouteRef = useRef(null)
+
+  const { roads } = useRoadData()
+  const { tematic } = useTematicData()
+
+  useDataUpdated({
+    onRoadsUpdated: () => console.log('[WS] Roads data updated'),
+    onTematicUpdated: () => console.log('[WS] Tematic data updated'),
+  })
+
+  // Fetch route when routeDestination changes
+  useEffect(() => {
+    if (!routeDestination) return
+    if (prevRouteRef.current === routeDestination) return
+    prevRouteRef.current = routeDestination
+
+    async function fetchRoute() {
+      setIsRouting(true)
+      setRouteInfo({ name: routeDestination.name || '' })
+
+      const from = await getCurrentPosition()
+
+      try {
+        const response = await fetch(
+          ENDPOINTS.route(from.lat, from.lng, routeDestination.lat, routeDestination.lng, 40),
+        )
+        const data = await response.json()
+
+        if (data.found) {
+          setRouteData(data.path)
+          setRouteInfo({
+            name: routeDestination.name || '',
+            distance: data.total_distance_m,
+            time: data.total_time_min,
+          })
+        } else {
+          setRouteData(null)
+          setRouteInfo({ error: data.error || 'Rute tidak ditemukan' })
+        }
+      } catch {
+        setRouteData(null)
+        setRouteInfo({ error: 'Gagal memuat rute' })
+      } finally {
+        setIsRouting(false)
+      }
+    }
+
+    fetchRoute()
+  }, [routeDestination])
+
+  const handleRoadSelect = useCallback((road) => {
+    setSelectedRoad(road)
+    setSheetKey((prev) => prev + 1)
+  }, [])
+
+  const handleRoadSheetClose = useCallback(() => {
+    setSelectedRoad(null)
+  }, [])
+
+  const handleAreaSelect = useCallback((properties) => {
+    setSelectedArea(properties)
+    setAreaSheetKey((prev) => prev + 1)
+  }, [])
+
+  const handleAreaSheetClose = useCallback(() => {
+    setSelectedArea(null)
+  }, [])
+
+  const handleClearRoute = useCallback(() => {
+    setRouteData(null)
+    setRouteInfo(null)
+  }, [])
+
+  return (
+    <div className="relative w-full h-full overflow-hidden bg-[#E8EDF2]">
+      <MapView
+        activeView={activeView}
+        onRoadSelect={handleRoadSelect}
+        onAreaSelect={handleAreaSelect}
+        onReady={onMapReady}
+        roads={roads}
+        tematic={tematic}
+        routeData={routeData}
+        isDarkMode={isDarkMode}
+      />
+
+      <div className="absolute inset-0 pointer-events-none">
+        <SearchBar onClick={onOpenSearch} />
+        <ViewToggle
+          activeView={activeView}
+          onToggle={setActiveView}
+        />
+        {/* Theme toggle — bottom left */}
+        <div className="absolute bottom-6 left-4 z-30 pointer-events-auto">
+          <ThemeToggle theme={theme} onChange={onThemeChange} />
+        </div>
+      </div>
+
+      {/* Route Info Banner */}
+      {(routeInfo || isRouting) && (
+        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-30 pointer-events-auto animate-fade-in-up">
+          <div className="bg-white text-black rounded-2xl shadow-2xl px-5 py-3 min-w-[280px] max-w-sm">
+            {isRouting ? (
+              <div className="flex items-center gap-3">
+                <div className="w-5 h-5 border-2 border-gray-300 border-t-[#005BBF] rounded-full animate-spin" />
+                <p className="text-sm text-gray-600">Mencari rute...</p>
+              </div>
+            ) : routeInfo?.error ? (
+              <div className="flex items-center justify-between gap-3">
+                <p className="text-sm text-red-500">{routeInfo.error}</p>
+                <button onClick={handleClearRoute} className="text-xs font-semibold text-gray-500 hover:text-gray-700">
+                  Tutup
+                </button>
+              </div>
+            ) : routeInfo ? (
+              <div className="flex items-center justify-between gap-4">
+                <div className="flex-1 min-w-0">
+                  {routeInfo.name && (
+                    <p className="text-xs text-gray-500 truncate">{routeInfo.name}</p>
+                  )}
+                  <p className="text-sm font-semibold text-gray-900">
+                    {routeInfo.distance ? `${(routeInfo.distance / 1000).toFixed(1)} km` : ''}
+                    {routeInfo.distance && routeInfo.time ? ` · ${routeInfo.time} menit` : ''}
+                  </p>
+                </div>
+                <button
+                  onClick={handleClearRoute}
+                  className="text-xs font-semibold text-white bg-[#005BBF] rounded-full px-3 py-1.5 hover:bg-[#004a9e] transition-colors"
+                >
+                  Tutup
+                </button>
+              </div>
+            ) : null}
+          </div>
+        </div>
+      )}
+
+      <RoadDetailSheet
+        key={sheetKey}
+        road={selectedRoad}
+        onClose={handleRoadSheetClose}
+      />
+
+      <AreaDetailSheet
+        key={areaSheetKey}
+        area={selectedArea}
+        onClose={handleAreaSheetClose}
+      />
+    </div>
+  )
+}
+
+export default HomePage

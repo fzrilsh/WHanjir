@@ -1,0 +1,11 @@
+node_modules/
+dist/
+dev-dist/
+*.local
+.DS_Store
+.vscode/
+.idea/
+*.swp
+*.swo
+.env
+.env.local
