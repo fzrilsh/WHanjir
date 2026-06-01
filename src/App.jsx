@@ -3,7 +3,6 @@ import { SocketProvider, useRoadData, useTematicData, useSocketContext } from '.
 import useTheme from './hooks/useTheme'
 import SplashScreen from './components/SplashScreen'
 import HomePage from './pages/HomePage'
-import SearchPage from './pages/SearchPage'
 
 // Module-level flag — tetap survive StrictMode double-mount / remount apa pun
 let splashDone = false
@@ -50,8 +49,6 @@ class ErrorBoundary extends Component {
 function AppShell() {
   const [splashVisible, setSplashVisible] = useState(!splashDone)
   const [mapReady, setMapReady] = useState(false)
-  const [showSearch, setShowSearch] = useState(false)
-  const [searchAnimatedIn, setSearchAnimatedIn] = useState(false)
   const [routeDestination, setRouteDestination] = useState(null)
   const [isOnline, setIsOnline] = useState(navigator.onLine)
   const { theme, setTheme, isDark } = useTheme()
@@ -86,58 +83,24 @@ function AppShell() {
     if (meta) meta.setAttribute('content', '#ffffff')
   }, [])
 
-  const handleOpenSearch = useCallback(() => {
-    setShowSearch(true)
-    // Lock body scroll — penting buat iOS Safari biar gak geser pas keyboard muncul
-    document.body.style.overflow = 'hidden'
-    document.body.style.position = 'fixed'
-    document.body.style.width = '100%'
-    requestAnimationFrame(() => setSearchAnimatedIn(true))
-  }, [])
-
-  const handleCloseSearch = useCallback(() => {
-    setSearchAnimatedIn(false)
-    setTimeout(() => {
-      setShowSearch(false)
-      // Restore body scroll
-      document.body.style.overflow = ''
-      document.body.style.position = ''
-      document.body.style.width = ''
-    }, 300)
-  }, [])
-
   const handleSelectRoute = useCallback((to) => {
     setRouteDestination(to)
-    handleCloseSearch()
-  }, [handleCloseSearch])
+  }, [])
 
   return (
     <>
-      {/* HomePage always mounted — map stays alive */}
-      <div className={`fixed inset-0 transition-all duration-300 ${showSearch && searchAnimatedIn ? 'scale-[0.92] rounded-2xl overflow-hidden' : 'scale-100 rounded-none'}`}>
+      {/* HomePage always mounted and fills viewport */}
+      <div className="fixed inset-0">
         <HomePage
           onMapReady={handleMapReady}
-          onOpenSearch={handleOpenSearch}
           routeDestination={routeDestination}
+          onSelectRoute={handleSelectRoute}
+          onClearRoute={() => setRouteDestination(null)}
           isDarkMode={isDark}
           theme={theme}
           onThemeChange={setTheme}
         />
       </div>
-
-      {/* SearchPage overlay — slide up from bottom */}
-      {showSearch && (
-        <div
-          className={`fixed inset-0 z-50 transition-transform duration-300 ease-out ${
-            searchAnimatedIn ? 'translate-y-0' : 'translate-y-full'
-          }`}
-        >
-          <SearchPage
-            onBack={handleCloseSearch}
-            onSelectRoute={handleSelectRoute}
-          />
-        </div>
-      )}
 
       {/* SplashScreen on top */}
       {splashVisible && (
