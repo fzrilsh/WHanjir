@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@variant dark (&:where(.dark, .dark *));
+
 /* Self-hosted Plus Jakarta Sans — zero external font request */
 @font-face {
   font-family: 'Plus Jakarta Sans';
@@ -67,4 +69,50 @@ textarea {
 
 details {
   display: none !important;
+}
+
+/* Style MapLibre UI controls (Navigation & Geolocate) in Dark Mode */
+.dark .maplibregl-ctrl-group {
+  background-color: #0f172a !important; /* slate-900 */
+  border: 1px solid rgba(51, 65, 85, 0.5) !important; /* slate-700/50 */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+}
+
+.dark .maplibregl-ctrl-group button {
+  border-bottom: 1px solid rgba(51, 65, 85, 0.3) !important;
+}
+
+.dark .maplibregl-ctrl-group button:last-child {
+  border-bottom: none !important;
+}
+
+.dark .maplibregl-ctrl-group button:hover {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+/* Invert standard MapLibre dark icons to white/light on dark background */
+.dark .maplibregl-ctrl-icon {
+  filter: invert(1) brightness(0.95) !important;
+}
+
+/* Custom premium scrollbar for tooltips and floating lists */
+.premium-scrollbar::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+.premium-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.premium-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(156, 163, 175, 0.4);
+  border-radius: 9999px;
+}
+.premium-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(156, 163, 175, 0.6);
+}
+.dark .premium-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(71, 85, 105, 0.6);
+}
+.dark .premium-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(100, 116, 139, 0.8);
 }
