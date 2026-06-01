@@ -25,6 +25,15 @@ function useTheme() {
   // Resolve actual dark mode: preferensi user atau ikut sistem
   const isDark = theme === 'system' ? getSystemDark() : theme === 'dark'
 
+  // Sync with document element class list for Tailwind v4 support
+  useEffect(() => {
+    if (isDark) {
+      document.documentElement.classList.add('dark')
+    } else {
+      document.documentElement.classList.remove('dark')
+    }
+  }, [isDark])
+
   const setTheme = useCallback((newTheme) => {
     setThemeState(newTheme)
     try {
