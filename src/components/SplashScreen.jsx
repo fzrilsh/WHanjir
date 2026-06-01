@@ -91,8 +91,8 @@ function SplashScreen({ ready, onFinish, connected, roadsReady, tematicReady, ma
         WHanjir
       </h1>
 
-      <p className="text-white/60 text-sm md:text-base font-medium tracking-wide mb-10">
-        Pantau Risiko Banjir di Sekitarmu
+      <p className="text-white/60 text-sm md:text-base font-medium tracking-wide mb-10 text-center px-4 max-w-xs md:max-w-md">
+        Waspadai jalanan yang tergenang banjir di dekat mu
       </p>
 
       {showOffline ? (
