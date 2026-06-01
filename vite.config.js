@@ -21,7 +21,7 @@ export default defineConfig({
       manifest: {
         name: 'WHanjir',
         short_name: 'WHanjir',
-        description: 'WHanjir — Pantau Risiko Banjir di Sekitarmu',
+        description: 'Waspadai jalanan yang tergenang banjir di dekat mu',
         theme_color: '#005bbf',
         background_color: '#ffffff',
         display: 'standalone',
