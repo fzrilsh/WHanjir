@@ -15,9 +15,18 @@ function hexToRgba(hex, alpha) {
 }
 
 function getStatusLevel(score) {
-  if (score >= 70) return { label: 'BANJIR PARAH', color: '#BA1A1A', water: Math.round(score * 0.8) }
-  if (score >= 40) return { label: 'TERGENANG', color: '#FFCC00', water: Math.round(score * 0.6) }
-  return { label: 'AMAN', color: '#34C759', water: Math.round(score * 0.4) }
+  if (score >= 70) {
+    // Skala banjir: 30 cm sampai 100 cm
+    const water = Math.round((score - 70) * (70 / 30) + 30)
+    return { label: 'BANJIR', color: '#BA1A1A', water }
+  }
+  if (score >= 40) {
+    // Skala tergenang: 10 cm sampai 29 cm
+    const water = Math.round((score - 40) * (20 / 30) + 2)
+    return { label: 'TERGENANG', color: '#FFCC00', water }
+  }
+  // Aman: 0 cm (jalan kering)
+  return { label: 'AMAN', color: '#34C759', water: 0 }
 }
 
 function RoadDetailSheet({ road, onClose }) {
@@ -97,23 +106,23 @@ function RoadDetailSheet({ road, onClose }) {
       <div
         id="road-detail-backdrop"
         onClick={handleClose}
-        className={`fixed inset-0 z-40 transition-opacity duration-300 ${
-          visible ? 'bg-black/30 opacity-100' : 'bg-black/0 opacity-0'
-        }`}
+        className={`fixed inset-0 z-40 transition-opacity duration-300 ${visible ? 'bg-black/30 opacity-100' : 'bg-black/0 opacity-0'
+          }`}
       />
 
-      {/* Bottom Sheet */}
+      {/* Bottom Sheet Wrapper */}
       <div
-        id="road-detail-sheet"
-        className="fixed inset-x-0 bottom-0 z-50"
-        style={{
-          transform: visible ? 'translateY(0)' : 'translateY(100%)',
-          transition: 'transform 300ms ease-out',
-        }}
+        className="fixed inset-x-0 bottom-0 md:bottom-6 md:left-1/2 md:-translate-x-1/2 md:inset-x-auto w-full md:max-w-[400px] z-50 pointer-events-auto"
       >
+        {/* Animated Inner Sheet */}
         <div
-          className="bg-white rounded-t-[24px] shadow-[0_-8px_40px_rgba(0,0,0,0.15)]"
-          style={{ maxHeight: '75vh' }}
+          id="road-detail-sheet"
+          className="bg-white dark:bg-slate-900 border-t md:border border-transparent dark:border-slate-800/80 md:border-gray-200/80 rounded-t-[24px] md:rounded-[24px] shadow-[0_-8px_40px_rgba(0,0,0,0.15)] transition-colors"
+          style={{
+            transform: visible ? 'translateY(0)' : 'translateY(100%)',
+            transition: 'transform 300ms ease-out',
+            maxHeight: '75vh'
+          }}
         >
           {/* Drag Handle */}
           <div
@@ -122,22 +131,22 @@ function RoadDetailSheet({ road, onClose }) {
             onPointerMove={handlePointerMove}
             onPointerUp={handlePointerUp}
           >
-            <div className="w-12 h-1.5 bg-[#C1C6D6] rounded-full" />
+            <div className="w-12 h-1.5 bg-[#C1C6D6] dark:bg-slate-700 rounded-full" />
           </div>
 
           <div className="px-4 pb-6 overflow-y-auto">
             {/* Header */}
             <div className="flex items-start justify-between">
-              <div>
+              <div className="text-gray-900 dark:text-white">
                 <div className="flex items-center gap-2">
-                  <RoadJunctionIcon className="w-[19px] h-[19px]" />
-                  <h2 className="text-xl font-semibold text-[#1A1B1E] leading-7">
+                  <RoadJunctionIcon className="w-[19px] h-[19px] text-[#005BBF] dark:text-blue-500" />
+                  <h2 className="text-xl font-semibold text-[#1A1B1E] dark:text-white leading-7">
                     {road.name}
                   </h2>
                 </div>
                 <div className="flex items-center gap-2 ml-[27px] mt-1">
-                  <LocationPinIcon className="!w-[11px] !h-[14px]" />
-                  <span className="text-xs font-medium text-[#414754] leading-4">
+                  <LocationPinIcon className="!w-[11px] !h-[14px] text-gray-400 dark:text-gray-500" />
+                  <span className="text-xs font-medium text-[#414754] dark:text-gray-300 leading-4">
                     Kelurahan: {road.kelurahan}
                   </span>
                 </div>
@@ -146,10 +155,10 @@ function RoadDetailSheet({ road, onClose }) {
               <button
                 type="button"
                 onClick={handleClose}
-                className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors shrink-0 mt-0.5"
+                className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-slate-800 text-[#414754] dark:text-gray-400 transition-colors shrink-0 mt-0.5"
                 aria-label="Tutup"
               >
-                <CloseIcon className="w-5 h-5 text-[#414754]" />
+                <CloseIcon className="w-5 h-5" />
               </button>
             </div>
 
@@ -170,8 +179,8 @@ function RoadDetailSheet({ road, onClose }) {
 
                 <div className="relative z-[1]">
                   <div className="flex items-center justify-between mb-3">
-                    <span className="text-xs font-medium text-[#414754] tracking-[0.6px]">
-                      STATUS AREA
+                    <span className="text-xs font-bold text-[#414754] dark:text-gray-400 tracking-[0.6px]">
+                      STATUS JALAN
                     </span>
                     <div
                       className="flex items-center gap-1.5 rounded-full px-3 py-1"
@@ -201,14 +210,14 @@ function RoadDetailSheet({ road, onClose }) {
                     </span>
                   </div>
 
-                  <p className="text-[11px] font-medium text-[#414754] tracking-[0.5px] leading-4 mt-1">
+                  <p className="text-[11px] font-medium text-[#414754] dark:text-gray-400 tracking-[0.5px] leading-4 mt-1">
                     Tinggi Air Saat Ini
                   </p>
                 </div>
               </div>
 
               {/* Sensor Info Card — dynamic icon bg + color by status */}
-              <div className="rounded-[48px] p-4 flex items-center gap-4 bg-white border border-[#E3E2E6]">
+              <div className="rounded-[48px] p-4 flex items-center gap-4 bg-white dark:bg-slate-800/50 border border-[#E3E2E6] dark:border-slate-800/80 shadow-sm transition-colors">
                 <div
                   className="w-10 h-10 rounded-full flex items-center justify-center shrink-0"
                   style={{
@@ -219,19 +228,19 @@ function RoadDetailSheet({ road, onClose }) {
                   <SensorSignalIcon className="w-5 h-[15px]" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-xs font-medium text-[#414754] leading-4">
+                  <p className="text-xs font-medium text-[#414754] dark:text-gray-400 leading-4">
                     Sumber Data
                   </p>
-                  <p className="text-sm font-medium text-[#1A1B1E] leading-5 mt-0.5">
+                  <p className="text-sm font-medium text-[#1A1B1E] dark:text-white leading-5 mt-0.5">
                     {road.sensor_referensi || `Sensor Banjir ${String(road.id).replace('way/', 'JB-') || 'JB-012'}`}
                   </p>
                 </div>
               </div>
 
               {/* Risk Score Card */}
-              <div className="rounded-[48px] p-4 bg-white border border-[#E3E2E6]">
+              <div className="rounded-[48px] p-4 bg-white dark:bg-slate-800/50 border border-[#E3E2E6] dark:border-slate-800/80 shadow-sm transition-colors">
                 <div className="flex items-center justify-between mb-3">
-                  <span className="text-xs font-medium text-[#414754] leading-4">
+                  <span className="text-xs font-medium text-[#414754] dark:text-gray-400 leading-4">
                     Tingkat Risiko
                   </span>
                   <div className="flex items-baseline gap-0.5">
@@ -241,14 +250,14 @@ function RoadDetailSheet({ road, onClose }) {
                     >
                       {Math.round(road.score)}
                     </span>
-                    <span className="text-[11px] font-normal text-[#414754] tracking-[0.5px] leading-4">
+                    <span className="text-[11px] font-normal text-[#414754] dark:text-gray-450 tracking-[0.5px] leading-4">
                       /100
                     </span>
                   </div>
                 </div>
 
                 {/* Progress Bar */}
-                <div className="h-[10px] bg-[#E3E2E6] rounded-full overflow-hidden">
+                <div className="h-[10px] bg-[#E3E2E6] dark:bg-slate-800 rounded-full overflow-hidden">
                   <div
                     className="h-full rounded-full relative overflow-hidden"
                     style={{ width: `${Math.min(road.score, 100)}%`, backgroundColor: status.color }}
@@ -264,10 +273,10 @@ function RoadDetailSheet({ road, onClose }) {
                 </div>
 
                 <div className="flex items-center justify-between mt-1.5">
-                  <span className="text-[11px] font-medium text-[#414754] opacity-70 tracking-[0.5px] leading-4">
+                  <span className="text-[11px] font-medium text-[#414754] dark:text-gray-450 opacity-70 tracking-[0.5px] leading-4">
                     Aman
                   </span>
-                  <span className="text-[11px] font-medium text-[#414754] opacity-70 tracking-[0.5px] leading-4">
+                  <span className="text-[11px] font-medium text-[#414754] dark:text-gray-450 opacity-70 tracking-[0.5px] leading-4">
                     Kritis
                   </span>
                 </div>
