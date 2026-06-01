@@ -83,6 +83,10 @@ function MapView({ activeView, onRoadSelect, onReady, roads, tematic, onAreaSele
     map.on("load", () => {
       map.resize();
       setIsLoaded(true);
+      // Immediately request geolocation permission and focus on user location
+      setTimeout(() => {
+        geolocate.trigger();
+      }, 600);
     });
 
     mapRef.current = map;
