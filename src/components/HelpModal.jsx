@@ -133,7 +133,7 @@ function HelpModal() {
 
             {/* Footer */}
             <div className="px-6 py-4 bg-gray-50 dark:bg-slate-900/80 border-t border-gray-100 dark:border-slate-800 text-center text-[11px] text-gray-400 dark:text-gray-500 font-medium">
-              WHanjir © {new Date().getFullYear()} · Bina Nusantara University
+              WHanjir © {new Date().getFullYear()} · DiswaraGroup · Human and Computer Interaction BINUS University
             </div>
           </div>
         </div>,
