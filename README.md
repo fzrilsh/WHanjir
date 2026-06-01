@@ -25,7 +25,7 @@ Aplikasi ini dikembangkan sebagai proyek mata kuliah **Human and Computer Intera
 
 ## Anggota Kelompok - Kelas LH01
 
-| NPM | Nama |
+| NIM | Nama |
 |---|---|
 | 2902659922 | **Fazril Syaveral Hillaby** |
 | 2902636856 | Juan Kevin Utomo |
