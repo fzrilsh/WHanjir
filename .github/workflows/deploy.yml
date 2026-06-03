@@ -25,7 +25,8 @@ jobs:
       - name: Build
         run: npm run build
         env:
-          VITE_API_HOST: flood-risk-api.fzrby.web.id
+          VITE_API_HOST_PRIMARY: intergonial-expansive-vinnie.ngrok-free.dev
+          VITE_API_HOST_FALLBACK: flood-risk-api.fzrby.web.id
           VITE_API_PORT: ""
           VITE_WS_PROTOCOL: https
 
