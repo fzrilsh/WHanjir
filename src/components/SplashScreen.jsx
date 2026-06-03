@@ -1,10 +1,11 @@
 import { useEffect, useState, useMemo } from 'react'
 import WaterDropIcon from './icons/WaterDropIcon'
 
-function SplashScreen({ ready, onFinish, connected, roadsReady, tematicReady, mapReady, isOnline }) {
+function SplashScreen({ ready, onFinish, connected, roadsReady, tematicReady, mapReady, isOnline, serverOffline }) {
   const [fadeOut, setFadeOut] = useState(false)
   const [minTimeDone, setMinTimeDone] = useState(false)
   const [showOffline, setShowOffline] = useState(false)
+  const [showServerOffline, setShowServerOffline] = useState(false)
 
   useEffect(() => {
     const timer = setTimeout(() => setMinTimeDone(true), 2000)
@@ -41,6 +42,15 @@ function SplashScreen({ ready, onFinish, connected, roadsReady, tematicReady, ma
 
     setShowOffline(false)
   }, [connected, socketTimeout, isOnline, minTimeDone])
+
+  // Detect server offline (both backends unreachable but user has internet)
+  useEffect(() => {
+    if (serverOffline && minTimeDone) {
+      const timer = setTimeout(() => setShowServerOffline(true), 500)
+      return () => clearTimeout(timer)
+    }
+    setShowServerOffline(false)
+  }, [serverOffline, minTimeDone])
 
   // Real progress based on actual milestones
   const STATUS_MESSAGES = [
@@ -95,7 +105,31 @@ function SplashScreen({ ready, onFinish, connected, roadsReady, tematicReady, ma
         Waspadai jalanan yang tergenang banjir di dekat mu
       </p>
 
-      {showOffline ? (
+      {showServerOffline ? (
+        <div className="flex flex-col items-center gap-3 px-8">
+          {/* Server icon */}
+          <svg className="w-10 h-10 text-white/60 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M5.25 14.25h13.5m-13.5 0a3 3 0 01-3-3m3 3a3 3 0 100 6h13.5a3 3 0 100-6m-16.5-3a3 3 0 013-3h13.5a3 3 0 013 3m-19.5 0a4.5 4.5 0 01.9-2.7L5.737 5.1a3.375 3.375 0 012.7-1.35h7.126c1.062 0 2.062.5 2.7 1.35l2.587 3.45a4.5 4.5 0 01.9 2.7m0 0a3 3 0 01-3 3m0 3h.008v.008h-.008v-.008zm0-6h.008v.008h-.008v-.008zm-3 6h.008v.008h-.008v-.008zm0-6h.008v.008h-.008v-.008z" />
+          </svg>
+
+          <div className="bg-white/10 rounded-2xl p-5 text-center max-w-xs">
+            <p className="text-white font-semibold text-base mb-2">
+              Server Sedang Tidak Aktif
+            </p>
+            <p className="text-white/60 text-sm leading-relaxed">
+              Koneksi internet kamu baik-baik saja, tapi server kami sedang mengalami gangguan atau dalam proses pemeliharaan. Silakan coba lagi nanti.
+            </p>
+          </div>
+
+          {/* Retry button */}
+          <button
+            onClick={() => window.location.reload()}
+            className="mt-2 px-6 py-2.5 bg-white/15 text-white rounded-full text-sm font-semibold hover:bg-white/25 transition-colors cursor-pointer active:scale-95"
+          >
+            Coba Lagi
+          </button>
+        </div>
+      ) : showOffline ? (
         <div className="flex flex-col items-center gap-3 px-8">
           {/* Offline icon */}
           <svg className="w-10 h-10 text-white/60 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
