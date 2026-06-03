@@ -45,6 +45,7 @@ function HomePage({ onMapReady, routeDestination, onSelectRoute, onClearRoute, i
       try {
         const response = await fetch(
           ENDPOINTS.route(from.lat, from.lng, routeDestination.lat, routeDestination.lng, 40),
+          { headers: { 'ngrok-skip-browser-warning': 'true' } },
         )
         const data = await response.json()
 
