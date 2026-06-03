@@ -1,12 +1,13 @@
 import { useEffect, useRef, useState, useCallback } from 'react'
 import { io } from 'socket.io-client'
-import { WS_URL } from '../config/api'
+import { getWsUrl, hostReady, isServerOffline } from '../config/api'
 
 function useSocket() {
   const socketRef = useRef(null)
   const [isConnected, setIsConnected] = useState(false)
   const [connectionInfo, setConnectionInfo] = useState(null)
   const [error, setError] = useState(null)
+  const [serverOffline, setServerOffline] = useState(false)
 
   const handlersRef = useRef({
     onCacheData: null,
@@ -17,77 +18,92 @@ function useSocket() {
   })
 
   useEffect(() => {
-    const socket = io(WS_URL, {
-      transports: ['polling', 'websocket'],
-      reconnection: true,
-      reconnectionAttempts: 10,
-      reconnectionDelay: 2000,
-    })
+    let socket = null
+    let cancelled = false
 
-    socket.on('connect', () => {
-      setIsConnected(true)
-      setError(null)
-    })
+    hostReady.then(({ offline }) => {
+      if (cancelled) return
 
-    socket.on('connected', (data) => {
-      setConnectionInfo(data)
-    })
-
-    socket.on('cache_data', (data) => {
-      if (handlersRef.current.onCacheData) {
-        handlersRef.current.onCacheData(data.data)
+      if (offline) {
+        setServerOffline(true)
+        return
       }
-    })
 
-    socket.on('tematic_data', (data) => {
-      if (handlersRef.current.onTematicData) {
-        handlersRef.current.onTematicData(data.data)
-      }
-    })
+      setServerOffline(false)
 
-    socket.on('data_updated', (info) => {
-      setConnectionInfo((prev) => ({
-        ...prev,
-        roads: info,
-      }))
-      if (handlersRef.current.onDataUpdated) {
-        handlersRef.current.onDataUpdated(info)
-      }
-      // Auto re-fetch fresh road data after backend signals update
-      setTimeout(() => {
-        if (socket.connected) socket.emit('request_cache')
-      }, 300)
-    })
+      socket = io(getWsUrl(), {
+        transports: ['polling', 'websocket'],
+        reconnection: true,
+        reconnectionAttempts: 10,
+        reconnectionDelay: 2000,
+      })
 
-    socket.on('tematic_updated', (info) => {
-      setConnectionInfo((prev) => ({
-        ...prev,
-        tematic: info,
-      }))
-      if (handlersRef.current.onTematicUpdated) {
-        handlersRef.current.onTematicUpdated(info)
-      }
-      // Auto re-fetch fresh tematic data after backend signals update
-      setTimeout(() => {
-        if (socket.connected) socket.emit('request_tematic_cache')
-      }, 300)
-    })
+      socket.on('connect', () => {
+        setIsConnected(true)
+        setError(null)
+      })
 
-    socket.on('error', (data) => {
-      setError(data.message)
-      if (handlersRef.current.onError) {
-        handlersRef.current.onError(data.message)
-      }
-    })
+      socket.on('connected', (data) => {
+        setConnectionInfo(data)
+      })
 
-    socket.on('disconnect', () => {
-      setIsConnected(false)
-    })
+      socket.on('cache_data', (data) => {
+        if (handlersRef.current.onCacheData) {
+          handlersRef.current.onCacheData(data.data)
+        }
+      })
 
-    socketRef.current = socket
+      socket.on('tematic_data', (data) => {
+        if (handlersRef.current.onTematicData) {
+          handlersRef.current.onTematicData(data.data)
+        }
+      })
+
+      socket.on('data_updated', (info) => {
+        setConnectionInfo((prev) => ({
+          ...prev,
+          roads: info,
+        }))
+        if (handlersRef.current.onDataUpdated) {
+          handlersRef.current.onDataUpdated(info)
+        }
+        setTimeout(() => {
+          if (socket.connected) socket.emit('request_cache')
+        }, 300)
+      })
+
+      socket.on('tematic_updated', (info) => {
+        setConnectionInfo((prev) => ({
+          ...prev,
+          tematic: info,
+        }))
+        if (handlersRef.current.onTematicUpdated) {
+          handlersRef.current.onTematicUpdated(info)
+        }
+        setTimeout(() => {
+          if (socket.connected) socket.emit('request_tematic_cache')
+        }, 300)
+      })
+
+      socket.on('error', (data) => {
+        setError(data.message)
+        if (handlersRef.current.onError) {
+          handlersRef.current.onError(data.message)
+        }
+      })
+
+      socket.on('disconnect', () => {
+        setIsConnected(false)
+      })
+
+      socketRef.current = socket
+    })
 
     return () => {
-      socket.disconnect()
+      cancelled = true
+      if (socket) {
+        socket.disconnect()
+      }
       socketRef.current = null
     }
   }, [])
@@ -115,6 +131,7 @@ function useSocket() {
     isConnected,
     connectionInfo,
     error,
+    serverOffline,
     requestCache,
     requestTematicCache,
     emit,
