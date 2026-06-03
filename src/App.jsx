@@ -53,7 +53,7 @@ function AppShell() {
   const [isOnline, setIsOnline] = useState(navigator.onLine)
   const { theme, setTheme, isDark } = useTheme()
 
-  const { isConnected } = useSocketContext()
+  const { isConnected, serverOffline } = useSocketContext()
   const { roadsReady } = useRoadData()
   const { tematicReady } = useTematicData()
 
@@ -112,6 +112,7 @@ function AppShell() {
           tematicReady={tematicReady}
           mapReady={mapReady}
           isOnline={isOnline}
+          serverOffline={serverOffline}
         />
       )}
     </>
