@@ -37,6 +37,7 @@ function SocketProvider({ children }) {
     tematic,
     setRoads,
     setTematic,
+    serverOffline: socket.serverOffline,
   }
 
   return (
