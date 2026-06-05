@@ -67,9 +67,6 @@ function useSocket() {
         if (handlersRef.current.onDataUpdated) {
           handlersRef.current.onDataUpdated(info)
         }
-        setTimeout(() => {
-          if (socket.connected) socket.emit('request_cache')
-        }, 300)
       })
 
       socket.on('tematic_updated', (info) => {
@@ -80,9 +77,6 @@ function useSocket() {
         if (handlersRef.current.onTematicUpdated) {
           handlersRef.current.onTematicUpdated(info)
         }
-        setTimeout(() => {
-          if (socket.connected) socket.emit('request_tematic_cache')
-        }, 300)
       })
 
       socket.on('error', (data) => {

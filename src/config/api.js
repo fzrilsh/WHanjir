@@ -66,6 +66,7 @@ export function isServerOffline() {
 export const ENDPOINTS = {
   health: () => `${getApiBase()}/health`,
   roads: () => `${getApiBase()}/`,
+  scores: () => `${getApiBase()}/scores`,
   search: (q, limit = 10, offset = 0) =>
     `${getApiBase()}/search?q=${encodeURIComponent(q)}&limit=${limit}&offset=${offset}`,
   tematic: () => `${getApiBase()}/tematic`,

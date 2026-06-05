@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useRef, useState, useCallback } from 'react'
 import useSocket from './useSocket'
+import { ENDPOINTS } from '../config/api'
 
 const SocketContext = createContext(null)
 
@@ -9,27 +10,173 @@ function SocketProvider({ children }) {
   const [tematic, setTematic] = useState(null)
 
   const handlersRef = socket.handlersRef
+  const lastRoadsTimestampRef = useRef(null)
+  const lastTematicTimestampRef = useRef(null)
+  const isFetchingRoadsRef = useRef(false)
+  const isFetchingTematicRef = useRef(false)
 
+  const onRoadsUpdatedRef = useRef(null)
+  const onTematicUpdatedRef = useRef(null)
+
+  const roadsRef = useRef(null)
   useEffect(() => {
-    handlersRef.current.onCacheData = (data) => {
+    roadsRef.current = roads
+  }, [roads])
+
+  const fetchFullRoads = useCallback(async () => {
+    if (isFetchingRoadsRef.current) return
+    isFetchingRoadsRef.current = true
+    try {
+      console.log('[SocketProvider] Fetching full roads cache...')
+      const response = await fetch(ENDPOINTS.roads(), {
+        headers: { 'ngrok-skip-browser-warning': 'true' }
+      })
+      if (!response.ok) throw new Error('Failed to fetch roads')
+      const data = await response.json()
+      
+      const etag = response.headers.get('ETag')
+      if (etag) {
+        lastRoadsTimestampRef.current = etag.replace(/"/g, '')
+      }
+      
       setRoads(data)
+      console.log('[SocketProvider] Full roads cache loaded successfully')
+    } catch (err) {
+      console.error('[SocketProvider] Error fetching roads:', err)
+    } finally {
+      isFetchingRoadsRef.current = false
     }
-    handlersRef.current.onTematicData = (data) => {
+  }, [])
+
+  const fetchTematic = useCallback(async () => {
+    if (isFetchingTematicRef.current) return
+    isFetchingTematicRef.current = true
+    try {
+      console.log('[SocketProvider] Fetching thematic cache...')
+      const response = await fetch(ENDPOINTS.tematic(), {
+        headers: { 'ngrok-skip-browser-warning': 'true' }
+      })
+      if (!response.ok) throw new Error('Failed to fetch thematic')
+      const data = await response.json()
+      
+      const etag = response.headers.get('ETag')
+      if (etag) {
+        lastTematicTimestampRef.current = etag.replace(/"/g, '')
+      }
+      
       setTematic(data)
+      console.log('[SocketProvider] Thematic cache loaded successfully')
+    } catch (err) {
+      console.error('[SocketProvider] Error fetching thematic:', err)
+    } finally {
+      isFetchingTematicRef.current = false
+    }
+  }, [])
+
+  const fetchScoresOnly = useCallback(async () => {
+    if (!roadsRef.current) {
+      return fetchFullRoads()
+    }
+    if (isFetchingRoadsRef.current) return
+    isFetchingRoadsRef.current = true
+    try {
+      console.log('[SocketProvider] Fetching updated scores...')
+      const response = await fetch(ENDPOINTS.scores(), {
+        headers: { 'ngrok-skip-browser-warning': 'true' }
+      })
+      if (!response.ok) throw new Error('Failed to fetch scores')
+      const scores = await response.json()
+      
+      const etag = response.headers.get('ETag')
+      if (etag) {
+        lastRoadsTimestampRef.current = etag.replace(/"/g, '')
+      }
+
+      // Merge scores into roads state
+      const scoresMap = new Map(scores.map(s => [s.id, s]))
+      setRoads(prevRoads => {
+        if (!prevRoads) return null
+        return prevRoads.map(road => {
+          const updated = scoresMap.get(road.id)
+          if (updated) {
+            return {
+              ...road,
+              ...updated
+            }
+          }
+          return road
+        })
+      })
+      console.log('[SocketProvider] Merged updated scores successfully')
+    } catch (err) {
+      console.error('[SocketProvider] Error updating scores:', err)
+    } finally {
+      isFetchingRoadsRef.current = false
+    }
+  }, [fetchFullRoads])
+
+  // Trigger initial fetch on mount
+  useEffect(() => {
+    fetchFullRoads()
+    fetchTematic()
+  }, [fetchFullRoads, fetchTematic])
+
+  // Set up socket event handlers
+  useEffect(() => {
+    handlersRef.current.onDataUpdated = (info) => {
+      console.log('[WS] Roads data updated event received:', info)
+      const newTs = info?.timestamp ? String(Math.floor(info.timestamp)) : null
+      if (!newTs || newTs !== lastRoadsTimestampRef.current) {
+        fetchScoresOnly()
+      } else {
+        console.log('[SocketProvider] Roads timestamp matches, skipping fetch')
+      }
+      if (onRoadsUpdatedRef.current) {
+        onRoadsUpdatedRef.current(info)
+      }
+    }
+
+    handlersRef.current.onTematicUpdated = (info) => {
+      console.log('[WS] Tematic data updated event received:', info)
+      const newTs = info?.timestamp ? String(Math.floor(info.timestamp)) : null
+      if (!newTs || newTs !== lastTematicTimestampRef.current) {
+        fetchTematic()
+      } else {
+        console.log('[SocketProvider] Tematic timestamp matches, skipping fetch')
+      }
+      if (onTematicUpdatedRef.current) {
+        onTematicUpdatedRef.current(info)
+      }
     }
 
     return () => {
-      handlersRef.current.onCacheData = null
-      handlersRef.current.onTematicData = null
+      handlersRef.current.onDataUpdated = null
+      handlersRef.current.onTematicUpdated = null
     }
-  }, [handlersRef])
+  }, [handlersRef, fetchScoresOnly, fetchTematic])
 
+  // Watch connectionInfo for updates while we were disconnected or during initial handshake
   useEffect(() => {
-    if (socket.isConnected) {
-      socket.requestCache()
-      socket.requestTematicCache()
+    if (!socket.isConnected || !socket.connectionInfo) return
+
+    const socketRoadsTs = socket.connectionInfo.roads?.timestamp
+      ? String(Math.floor(socket.connectionInfo.roads.timestamp))
+      : null
+    
+    if (socketRoadsTs && socketRoadsTs !== lastRoadsTimestampRef.current) {
+      console.log('[SocketProvider] Connection info indicates new roads data, updating...')
+      fetchScoresOnly()
     }
-  }, [socket.isConnected, socket.requestCache, socket.requestTematicCache])
+
+    const socketTematicTs = socket.connectionInfo.tematic?.timestamp
+      ? String(Math.floor(socket.connectionInfo.tematic.timestamp))
+      : null
+
+    if (socketTematicTs && socketTematicTs !== lastTematicTimestampRef.current) {
+      console.log('[SocketProvider] Connection info indicates new thematic data, updating...')
+      fetchTematic()
+    }
+  }, [socket.isConnected, socket.connectionInfo, fetchScoresOnly, fetchTematic])
 
   const value = {
     ...socket,
@@ -38,6 +185,8 @@ function SocketProvider({ children }) {
     setRoads,
     setTematic,
     serverOffline: socket.serverOffline,
+    onRoadsUpdatedRef,
+    onTematicUpdatedRef,
   }
 
   return (
@@ -56,9 +205,9 @@ function useSocketContext() {
 }
 
 function useRoadData() {
-  const { roads, isConnected, connectionInfo, requestCache } = useSocketContext()
+  const { roads, connectionInfo, requestCache } = useSocketContext()
 
-  const roadsReady = isConnected && roads !== null
+  const roadsReady = roads !== null
 
   return {
     roads,
@@ -69,9 +218,9 @@ function useRoadData() {
 }
 
 function useTematicData() {
-  const { tematic, isConnected, connectionInfo, requestTematicCache } = useSocketContext()
+  const { tematic, connectionInfo, requestTematicCache } = useSocketContext()
 
-  const tematicReady = isConnected && tematic !== null
+  const tematicReady = tematic !== null
 
   return {
     tematic,
@@ -82,21 +231,21 @@ function useTematicData() {
 }
 
 function useDataUpdated({ onRoadsUpdated, onTematicUpdated } = {}) {
-  const { handlersRef } = useSocketContext()
+  const { onRoadsUpdatedRef, onTematicUpdatedRef } = useSocketContext()
 
   useEffect(() => {
-    handlersRef.current.onDataUpdated = onRoadsUpdated || null
+    onRoadsUpdatedRef.current = onRoadsUpdated || null
     return () => {
-      handlersRef.current.onDataUpdated = null
+      onRoadsUpdatedRef.current = null
     }
-  }, [onRoadsUpdated, handlersRef])
+  }, [onRoadsUpdated, onRoadsUpdatedRef])
 
   useEffect(() => {
-    handlersRef.current.onTematicUpdated = onTematicUpdated || null
+    onTematicUpdatedRef.current = onTematicUpdated || null
     return () => {
-      handlersRef.current.onTematicUpdated = null
+      onTematicUpdatedRef.current = null
     }
-  }, [onTematicUpdated, handlersRef])
+  }, [onTematicUpdated, onTematicUpdatedRef])
 }
 
 export {
