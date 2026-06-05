@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useRef, useState, useCallback } from 'react'
 import useSocket from './useSocket'
-import { ENDPOINTS } from '../config/api'
+import { ENDPOINTS, hostReady } from '../config/api'
 
 const SocketContext = createContext(null)
 
@@ -27,7 +27,14 @@ function SocketProvider({ children }) {
     if (isFetchingRoadsRef.current) return
     isFetchingRoadsRef.current = true
     try {
-      console.log('[SocketProvider] Fetching full roads cache...')
+      // Tunggu hingga host aktif teridentifikasi
+      const { offline } = await hostReady
+      if (offline) {
+        console.warn('[SocketProvider] Host offline, skipping roads fetch')
+        return
+      }
+
+      console.log('[SocketProvider] Fetching full roads cache from:', ENDPOINTS.roads())
       const response = await fetch(ENDPOINTS.roads(), {
         headers: { 'ngrok-skip-browser-warning': 'true' }
       })
@@ -52,7 +59,14 @@ function SocketProvider({ children }) {
     if (isFetchingTematicRef.current) return
     isFetchingTematicRef.current = true
     try {
-      console.log('[SocketProvider] Fetching thematic cache...')
+      // Tunggu hingga host aktif teridentifikasi
+      const { offline } = await hostReady
+      if (offline) {
+        console.warn('[SocketProvider] Host offline, skipping thematic fetch')
+        return
+      }
+
+      console.log('[SocketProvider] Fetching thematic cache from:', ENDPOINTS.tematic())
       const response = await fetch(ENDPOINTS.tematic(), {
         headers: { 'ngrok-skip-browser-warning': 'true' }
       })
@@ -80,7 +94,14 @@ function SocketProvider({ children }) {
     if (isFetchingRoadsRef.current) return
     isFetchingRoadsRef.current = true
     try {
-      console.log('[SocketProvider] Fetching updated scores...')
+      // Tunggu hingga host aktif teridentifikasi
+      const { offline } = await hostReady
+      if (offline) {
+        console.warn('[SocketProvider] Host offline, skipping scores fetch')
+        return
+      }
+
+      console.log('[SocketProvider] Fetching updated scores from:', ENDPOINTS.scores())
       const response = await fetch(ENDPOINTS.scores(), {
         headers: { 'ngrok-skip-browser-warning': 'true' }
       })
