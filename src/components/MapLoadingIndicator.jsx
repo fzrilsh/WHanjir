@@ -1,6 +1,8 @@
 import { useState } from 'react'
+import { useI18n } from '../i18n/I18nProvider'
 
 function MapLoadingIndicator() {
+  const { t } = useI18n()
   const [show, setShow] = useState(true)
 
   // Auto-hide after 5 seconds (tiles should be loaded by then)
@@ -15,7 +17,7 @@ function MapLoadingIndicator() {
     <div className="absolute inset-0 flex items-center justify-center bg-[#E8EDF2] z-[1] pointer-events-none">
       <div className="flex flex-col items-center gap-3">
         <div className="w-8 h-8 border-[3px] border-[#005BBF]/20 border-t-[#005BBF] rounded-full animate-spin" />
-        <p className="text-xs text-gray-400">Memuat peta...</p>
+        <p className="text-xs text-gray-400">{t('map.loading')}</p>
       </div>
     </div>
   )

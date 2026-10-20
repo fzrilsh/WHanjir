@@ -1,7 +1,10 @@
 import { useEffect, useState, useMemo } from 'react'
-import WaterDropIcon from './icons/WaterDropIcon'
+import { useI18n } from '../i18n/I18nProvider'
+
+const base = import.meta.env.BASE_URL || '/'
 
 function SplashScreen({ ready, onFinish, connected, roadsReady, tematicReady, mapReady, isOnline, serverOffline }) {
+  const { t } = useI18n()
   const [fadeOut, setFadeOut] = useState(false)
   const [minTimeDone, setMinTimeDone] = useState(false)
   const [showOffline, setShowOffline] = useState(false)
@@ -54,12 +57,12 @@ function SplashScreen({ ready, onFinish, connected, roadsReady, tematicReady, ma
 
   // Real progress based on actual milestones
   const STATUS_MESSAGES = [
-    'Memulai aplikasi...',
-    'Menghubungkan ke server...',
-    'Memuat data jalan...',
-    'Memuat data kelurahan...',
-    'Menyiapkan peta...',
-    'Siap!',
+    t('splash.starting'),
+    t('splash.connecting'),
+    t('splash.loadingRoads'),
+    t('splash.loadingAreas'),
+    t('splash.preparingMap'),
+    t('splash.ready'),
   ]
 
   const currentPhase = useMemo(() => {
@@ -93,16 +96,22 @@ function SplashScreen({ ready, onFinish, connected, roadsReady, tematicReady, ma
         ${fadeOut ? 'opacity-0' : 'opacity-100'}
       `}
     >
-      <div className="mb-6 text-white/90">
-        <WaterDropIcon className="w-24 h-24 md:w-28 md:h-28" />
+      <div className="mb-5">
+        <img
+          src={`${base}assets/whanjir/logo-drop.svg`}
+          width={72}
+          height={72}
+          alt={t('common.appName')}
+          className="w-[72px] h-[72px]"
+        />
       </div>
 
-      <h1 className="text-white text-4xl md:text-5xl font-extrabold tracking-tight mb-2">
-        WHanjir
+      <h1 className="text-white text-[32px] font-extrabold leading-10 tracking-[-0.64px] mb-2">
+        {t('common.appName')}
       </h1>
 
-      <p className="text-white/60 text-sm md:text-base font-medium tracking-wide mb-10 text-center px-4 max-w-xs md:max-w-md">
-        Waspadai jalanan yang tergenang banjir di dekat mu
+      <p className="text-[#EFF6FF] text-sm font-medium leading-5 mb-10 text-center px-4">
+        {t('common.tagline')}
       </p>
 
       {showServerOffline ? (
@@ -114,10 +123,10 @@ function SplashScreen({ ready, onFinish, connected, roadsReady, tematicReady, ma
 
           <div className="bg-white/10 rounded-2xl p-5 text-center max-w-xs">
             <p className="text-white font-semibold text-base mb-2">
-              Server Sedang Tidak Aktif
+              {t('splash.serverOfflineTitle')}
             </p>
             <p className="text-white/60 text-sm leading-relaxed">
-              Koneksi internet kamu baik-baik saja, tapi server kami sedang mengalami gangguan atau dalam proses pemeliharaan. Silakan coba lagi nanti.
+              {t('splash.serverOfflineBody')}
             </p>
           </div>
 
@@ -126,7 +135,7 @@ function SplashScreen({ ready, onFinish, connected, roadsReady, tematicReady, ma
             onClick={() => window.location.reload()}
             className="mt-2 px-6 py-2.5 bg-white/15 text-white rounded-full text-sm font-semibold hover:bg-white/25 transition-colors cursor-pointer active:scale-95"
           >
-            Coba Lagi
+            {t('splash.retry')}
           </button>
         </div>
       ) : showOffline ? (
@@ -138,10 +147,10 @@ function SplashScreen({ ready, onFinish, connected, roadsReady, tematicReady, ma
 
           <div className="bg-white/10 rounded-2xl p-5 text-center max-w-xs">
             <p className="text-white font-semibold text-base mb-2">
-              Tidak Ada Koneksi Internet
+              {t('splash.offlineTitle')}
             </p>
             <p className="text-white/60 text-sm leading-relaxed">
-              Aplikasi tidak dapat dibuka karena membutuhkan data real-time dari server. Periksa koneksi internet kamu dan coba lagi.
+              {t('splash.offlineBody')}
             </p>
           </div>
 
@@ -150,21 +159,21 @@ function SplashScreen({ ready, onFinish, connected, roadsReady, tematicReady, ma
             onClick={() => window.location.reload()}
             className="mt-2 px-6 py-2.5 bg-white/15 text-white rounded-full text-sm font-semibold hover:bg-white/25 transition-colors cursor-pointer active:scale-95"
           >
-            Coba Lagi
+            {t('splash.retry')}
           </button>
         </div>
       ) : (
         <>
           {/* Loading bar */}
-          <div className="w-48 h-1 bg-white/20 rounded-full overflow-hidden mb-4">
+          <div className="w-40 h-1 bg-[#2F6FD6] rounded-sm overflow-hidden mb-3">
             <div
-              className="h-full bg-white/80 rounded-full transition-all duration-700 ease-out"
+              className="h-full bg-white rounded-sm transition-all duration-700 ease-out"
               style={{ width: `${progress}%` }}
             />
           </div>
 
           {/* Status text */}
-          <p className="text-white/50 text-xs tracking-wide min-h-[1.2em]">
+          <p className="text-[#DBEAFE] text-xs font-medium tracking-wide min-h-[1.2em]">
             {STATUS_MESSAGES[currentPhase] || STATUS_MESSAGES[0]}
           </p>
         </>

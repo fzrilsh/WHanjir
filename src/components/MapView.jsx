@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, memo } from "react";
 import MapLoadingIndicator from "./MapLoadingIndicator";
+import { setKnownPosition } from "../utils/geolocation";
 
 const STYLE_LIGHT =
   "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json";
@@ -17,7 +18,7 @@ function getBasemapStyle(isDark) {
   return isDark ? STYLE_DARK : STYLE_LIGHT;
 }
 
-function MapView({ activeView, onRoadSelect, onReady, roads, tematic, onAreaSelect, routeData, isDarkMode }) {
+function MapView({ activeView, onRoadSelect, onReady, roads, tematic, onAreaSelect, routeData, isDarkMode, mapApiRef }) {
   const mapContainerRef = useRef(null);
   const mapRef = useRef(null);
   const maplibreglRef = useRef(null);
@@ -77,8 +78,27 @@ function MapView({ activeView, onRoadSelect, onReady, roads, tematic, onAreaSele
       fitBoundsOptions: { maxZoom: 20, linear: false },
     });
 
-    map.addControl(new maplibregl.NavigationControl(), "bottom-right");
+    // Share the map's fix with the rest of the app. The map resolves the user's
+    // position on load, so routing can reuse it instead of asking the browser a
+    // second time (which is what produced wrong origins before).
+    geolocate.on("geolocate", (e) => {
+      setKnownPosition({
+        lat: e.coords.latitude,
+        lng: e.coords.longitude,
+        accuracy: e.coords.accuracy,
+        source: "maplibre",
+      });
+    });
+
+    map.addControl(new maplibregl.NavigationControl({ showCompass: false }), "bottom-right");
     map.addControl(geolocate, "bottom-right");
+
+    // Hide default controls — we render custom right-rail buttons
+    setTimeout(() => {
+      document.querySelectorAll('.maplibregl-ctrl-bottom-right').forEach((el) => {
+        el.style.display = 'none'
+      })
+    }, 0)
 
     map.on("load", () => {
       map.resize();
@@ -90,6 +110,15 @@ function MapView({ activeView, onRoadSelect, onReady, roads, tematic, onAreaSele
     });
 
     mapRef.current = map;
+
+    if (mapApiRef) {
+      mapApiRef.current = {
+        zoomIn: () => map.zoomIn(),
+        zoomOut: () => map.zoomOut(),
+        locate: () => geolocate.trigger(),
+        getCenter: () => map.getCenter(),
+      }
+    }
 
     return () => {
       map.remove();
@@ -249,7 +278,9 @@ async function loadRoadView(map, roads, onRoadSelect) {
   if (!roads || roads.length === 0) return;
 
   function onRoadClick(e) {
-    if (onRoadSelect) onRoadSelect(e.features[0].properties);
+    const feature = e.features[0];
+    // Include geometry so the sheet can route to this road's location
+    if (onRoadSelect) onRoadSelect({ ...feature.properties, geometry: feature.geometry });
   }
   function onRoadEnter() { map.getCanvas().style.cursor = "pointer"; }
   function onRoadLeave() { map.getCanvas().style.cursor = ""; }
@@ -301,7 +332,9 @@ async function loadAreaView(map, tematic, onAreaSelect, isDark) {
   if (!tematic || !tematic.features || tematic.features.length === 0) return;
 
   function onAreaClick(e) {
-    if (onAreaSelect) onAreaSelect(e.features[0].properties);
+    const feature = e.features[0];
+    // Include geometry so the sheet can route to this area's location
+    if (onAreaSelect) onAreaSelect({ ...feature.properties, geometry: feature.geometry });
   }
   function onAreaEnter() { map.getCanvas().style.cursor = "pointer"; }
   function onAreaLeave() { map.getCanvas().style.cursor = ""; }

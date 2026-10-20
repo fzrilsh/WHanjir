@@ -35,9 +35,7 @@ function SocketProvider({ children }) {
       }
 
       console.log('[SocketProvider] Fetching full roads cache from:', ENDPOINTS.roads())
-      const response = await fetch(ENDPOINTS.roads(), {
-        headers: { 'ngrok-skip-browser-warning': 'true' }
-      })
+      const response = await fetch(ENDPOINTS.roads())
       if (!response.ok) throw new Error('Failed to fetch roads')
       const data = await response.json()
       
@@ -67,9 +65,7 @@ function SocketProvider({ children }) {
       }
 
       console.log('[SocketProvider] Fetching thematic cache from:', ENDPOINTS.tematic())
-      const response = await fetch(ENDPOINTS.tematic(), {
-        headers: { 'ngrok-skip-browser-warning': 'true' }
-      })
+      const response = await fetch(ENDPOINTS.tematic())
       if (!response.ok) throw new Error('Failed to fetch thematic')
       const data = await response.json()
       
@@ -102,9 +98,7 @@ function SocketProvider({ children }) {
       }
 
       console.log('[SocketProvider] Fetching updated scores from:', ENDPOINTS.scores())
-      const response = await fetch(ENDPOINTS.scores(), {
-        headers: { 'ngrok-skip-browser-warning': 'true' }
-      })
+      const response = await fetch(ENDPOINTS.scores())
       if (!response.ok) throw new Error('Failed to fetch scores')
       const scores = await response.json()
       

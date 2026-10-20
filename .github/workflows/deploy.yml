@@ -27,7 +27,6 @@ jobs:
         run: npm run build
         env:
           VITE_API_HOST_PRIMARY: whanjir.fazrilsh.com
-          VITE_API_HOST_FALLBACK: intergonial-expansive-vinnie.ngrok-free.dev
           VITE_API_PORT: ""
           VITE_WS_PROTOCOL: https
 

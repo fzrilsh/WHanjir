@@ -5,17 +5,17 @@ import { VitePWA } from 'vite-plugin-pwa'
 
 export default defineConfig({
   base: '/WHanjir/',
-  server: {
-    allowedHosts: ['3990-180-242-131-95.ngrok-free.app']
-  },
   plugins: [
     react(),
     tailwindcss(),
     VitePWA({
       registerType: 'autoUpdate',
+      // Dev service workers cache the app shell, then serve that stale shell
+      // when the dev server stops (manifest/JS requests fail with
+      // ERR_CONNECTION_REFUSED). Keep the SW for builds only; enable this
+      // temporarily if you need to test offline behaviour in `npm run dev`.
       devOptions: {
-        enabled: true,
-        type: 'module',
+        enabled: false,
       },
       includeAssets: ['pwa-192x192.png', 'pwa-512x512.png'],
       manifest: {

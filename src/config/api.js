@@ -22,7 +22,6 @@ async function checkHealth(host) {
   try {
     const res = await fetch(`${buildBase(host)}/health`, {
       signal: controller.signal,
-      headers: { 'ngrok-skip-browser-warning': 'true' },
     })
     clearTimeout(timeout)
     return res.ok

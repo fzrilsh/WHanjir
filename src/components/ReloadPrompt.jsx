@@ -1,6 +1,8 @@
 import { useRegisterSW } from 'virtual:pwa-register/react'
+import { useI18n } from '../i18n/I18nProvider'
 
 function ReloadPrompt() {
+  const { t } = useI18n()
   const {
     offlineReady: [offlineReady, setOfflineReady],
     needRefresh: [needRefresh, setNeedRefresh],
@@ -30,8 +32,8 @@ function ReloadPrompt() {
       <div className="bg-[#1a1a2e] text-white rounded-2xl shadow-2xl p-5 flex flex-col gap-4">
         <p className="text-sm leading-relaxed m-0">
           {offlineReady
-            ? 'Aplikasi siap digunakan secara offline'
-            : 'Konten baru tersedia, klik perbarui untuk versi terbaru'}
+            ? t('pwa.offlineReady')
+            : t('pwa.needRefresh')}
         </p>
         <div className="flex gap-3 justify-end">
           {needRefresh && (
@@ -39,14 +41,14 @@ function ReloadPrompt() {
               onClick={() => updateServiceWorker(true)}
               className="px-5 py-2.5 bg-[#005bbf] text-white rounded-full text-sm font-semibold hover:bg-[#004a9e] transition-colors cursor-pointer"
             >
-              Perbarui
+              {t('pwa.update')}
             </button>
           )}
           <button
             onClick={close}
             className="px-5 py-2.5 bg-white/10 text-white rounded-full text-sm font-semibold hover:bg-white/20 transition-colors cursor-pointer"
           >
-            Tutup
+            {t('common.close')}
           </button>
         </div>
       </div>

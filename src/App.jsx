@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect, Component } from 'react'
 import { SocketProvider, useRoadData, useTematicData, useSocketContext } from './hooks/SocketProvider'
+import I18nProvider, { useI18n } from './i18n/I18nProvider'
 import useTheme from './hooks/useTheme'
 import SplashScreen from './components/SplashScreen'
 import HomePage from './pages/HomePage'
@@ -21,29 +22,32 @@ class ErrorBoundary extends Component {
   }
   render() {
     if (this.state.hasError) {
-      return (
-        <div className="fixed inset-0 bg-[#005bbf] flex flex-col items-center justify-center text-white p-8">
-          <h1 className="text-2xl font-bold mb-4">Ada yang error nih</h1>
-          <p className="text-white/60 text-sm mb-6 text-center max-w-xs">
-            Coba reload halaman atau periksa koneksi internet kamu.
-          </p>
-          <button
-            onClick={() => window.location.reload()}
-            className="px-6 py-2.5 bg-white/15 text-white rounded-full text-sm font-semibold hover:bg-white/25 transition-colors cursor-pointer"
-          >
-            Reload Halaman
-          </button>
-          {this.state.error && (
-            <details className="mt-6 text-white/40 text-xs max-w-md">
-              <summary className="cursor-pointer">Detail error</summary>
-              <pre className="mt-2 whitespace-pre-wrap">{this.state.error.toString()}</pre>
-            </details>
-          )}
-        </div>
-      )
+      return <ErrorFallback error={this.state.error} />
     }
     return this.props.children
   }
+}
+
+function ErrorFallback({ error }) {
+  const { t } = useI18n()
+  return (
+    <div className="fixed inset-0 bg-[#005bbf] flex flex-col items-center justify-center text-white p-8">
+      <h1 className="text-2xl font-bold mb-4">{t('error.title')}</h1>
+      <p className="text-white/60 text-sm mb-6 text-center max-w-xs">{t('error.body')}</p>
+      <button
+        onClick={() => window.location.reload()}
+        className="px-6 py-2.5 bg-white/15 text-white rounded-full text-sm font-semibold hover:bg-white/25 transition-colors cursor-pointer"
+      >
+        {t('error.reload')}
+      </button>
+      {error && (
+        <details className="mt-6 text-white/40 text-xs max-w-md">
+          <summary className="cursor-pointer">{t('error.details')}</summary>
+          <pre className="mt-2 whitespace-pre-wrap">{error.toString()}</pre>
+        </details>
+      )}
+    </div>
+  )
 }
 
 function AppShell() {
@@ -121,11 +125,13 @@ function AppShell() {
 
 function App() {
   return (
-    <ErrorBoundary>
-      <SocketProvider>
-        <AppShell />
-      </SocketProvider>
-    </ErrorBoundary>
+    <I18nProvider>
+      <ErrorBoundary>
+        <SocketProvider>
+          <AppShell />
+        </SocketProvider>
+      </ErrorBoundary>
+    </I18nProvider>
   )
 }
 
