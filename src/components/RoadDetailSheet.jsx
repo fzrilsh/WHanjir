@@ -139,7 +139,7 @@ function RoadDetailSheet({ road, dataUpdatedAt, onClose, onRouteHere }) {
             <div className="w-10 h-1 bg-[#E3E2E6] dark:bg-slate-700 rounded-sm" />
           </div>
 
-          <div className="overflow-y-auto premium-scrollbar flex flex-col gap-3" style={{ maxHeight: 'calc(80vh - 24px)' }}>
+          <div className="overflow-y-auto overflow-x-hidden premium-scrollbar flex flex-col gap-3" style={{ maxHeight: 'calc(80vh - 24px)' }}>
             {/* Sheet header */}
             <div className="flex items-center justify-between h-11">
               <span className="text-[11px] font-bold text-[#5B6270] dark:text-gray-400 tracking-[0.6px]">
@@ -149,7 +149,7 @@ function RoadDetailSheet({ road, dataUpdatedAt, onClose, onRouteHere }) {
                 type="button"
                 onClick={closeSheet}
                 aria-label={t('common.close')}
-                className="w-11 h-11 flex items-center justify-center rounded-xl hover:bg-black/5 dark:hover:bg-white/10 transition-colors cursor-pointer -mr-2"
+                className="w-11 h-11 flex items-center justify-center rounded-xl hover:bg-black/5 dark:hover:bg-white/10 transition-colors cursor-pointer"
               >
                 <img src={`${A}/icon-close.svg`} width={20} height={20} alt="" className="dark:invert dark:opacity-80" />
               </button>
